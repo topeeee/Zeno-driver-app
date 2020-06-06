@@ -1,12 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text } from '..'
+import { Text } from '../'
+import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const SimpleHeader = ({}) => {
+const SimpleHeader = ({ }) => {
 
     return (
         <View style={{ height: 60, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text>X</Text>
+            <MIcon name={'arrow-bottom-left-thick'} />
             <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16 }}  >{'Sign up'}</Text>
         </View>
     )

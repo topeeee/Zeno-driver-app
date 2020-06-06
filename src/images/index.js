@@ -6,6 +6,7 @@ import google_logo from './google_logo.png';
 import facebook_logo from './facebook_logo.png';
 import forget_password from './forget_password.png';
 import placeholder_image from './placeholder_image.png';
+import popup_banner from './popup_banner.png';
 
 export {
     logo,
@@ -15,5 +16,6 @@ export {
     google_logo,
     facebook_logo,
     forget_password,
-    placeholder_image
+    placeholder_image,
+    popup_banner
 }

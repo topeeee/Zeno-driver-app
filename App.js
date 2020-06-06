@@ -2,13 +2,13 @@ import React from 'react';
 import {
   SafeAreaView, StyleSheet,
 } from 'react-native';
-import { Splash, Welcome, Login } from './src/Screens';
+import { Splash, Welcome, Login ,ForgetPassword } from './src/Screens';
 
 
 const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Login />
+      <ForgetPassword />
     </SafeAreaView>
   );
 };

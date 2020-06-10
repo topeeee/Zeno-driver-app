@@ -6,7 +6,7 @@ import { SimpleHeader, LargeHeader, Button, Input, GoogleLoginButton, FacebookLo
 import PhoneInput from 'react-native-phone-input'
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-const SignUp = () => {
+const SignUp = ({ navigation }) => {
 
 
     const renderPhoneInput = () => {
@@ -43,7 +43,7 @@ const SignUp = () => {
                         <Text style={{ marginVertical: 5 }}>{`Term and Conditions`}</Text>
                     </View>
                 </View>
-                <Button text={'CREATE ACCOUNT'} style={{ marginVertical: 20 }} />
+                <Button onPress={() => navigation.navigate('Home')} text={'CREATE ACCOUNT'} style={{ marginVertical: 20 }} />
                 <Text style={{ marginVertical: 10, textAlign: 'center', color: '#7A869A' }}>{`Or sign in account`}</Text>
             </View>
         </ScrollView >

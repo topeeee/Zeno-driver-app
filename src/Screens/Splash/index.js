@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, Dimensions } from 'react-native'
 import { logo, splash_bottom_banner } from "../../images";
 import { Text } from '../../Components';
 
 const { width } = Dimensions.get('window')
 
-const Splash = () => {
+const Splash = ({ navigation }) => {
+
+    useEffect(() => {
+        setTimeout(() => {
+            navigation.navigate('Welcome')
+        }, 3000)
+    }, [])
+
     return (
         <View style={styles.container}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

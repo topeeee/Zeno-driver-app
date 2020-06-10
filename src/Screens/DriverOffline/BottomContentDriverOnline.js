@@ -6,6 +6,7 @@ import SelectPassenger from './SelectPassenger'
 import SetPassengerModal from './SetPassengerModal'
 import RBSheet from "react-native-raw-bottom-sheet";
 import SignUpUser from './SignUpUser'
+import ReciptsModal from './ReciptModal'
 
 const OnlineBottomContent = () => {
 
@@ -14,6 +15,7 @@ const OnlineBottomContent = () => {
     const [isShowSetPassenger, setIsShowSetPassenger] = useState(false)
     const [isShowPassengerModal, setIsShowPassengerModal] = useState(false)
     const [isShowSignUpUser, setIsShowSignUpUser] = useState(false)
+    const [isShowReciptsModal, setIsShowReciptsModal] = useState(false)
 
 
     const renderBusStopsList = () => {
@@ -67,6 +69,34 @@ const OnlineBottomContent = () => {
         )
     }
 
+    const renderDropOffPassenger = () => {
+        return (
+            <View style={{ flex: 1 }}>
+                {[1, 1].map((x) => (<View style={{ height: 80, borderWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: '#F7F7F7', borderRadius: 10, paddingHorizontal: 5, marginVertical: 3 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flex: 1, borderWidth: 0, marginHorizontal: 10 }}>
+                            <Text style={{ fontSize: 12 }}>Trip ID : 0001</Text>
+                            <View style={{ backgroundColor: '#C2354D', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 6, width: 75, marginVertical: 5 }}>
+                                <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold', textAlign: 'center' }}>Drop</Text>
+                            </View>
+                        </View>
+                        <View style={{ flex: 1, }}>
+                            <Text />
+                            <View style={{ backgroundColor: '#679C4C', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 6, width: 75, marginVertical: 5 }}>
+                                <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold', textAlign: 'center' }}>Pin: 1234</Text>
+                            </View>
+                        </View>
+                        <Text style={{ fontSize: 20 }}>₦240.00</Text>
+                    </View>
+                </View>))}
+
+                <View style={{ width: '50%', alignSelf: 'center', marginVertical: 10 }}>
+                    <Button onPress={() => setIsShowReciptsModal(true)} text={'Drop All'} />
+                </View>
+            </View>
+        )
+    }
+
     const renderPickUpByPassenger = () => {
         return (
             <View style={{ flexDirection: 'row', height: 40, backgroundColor: '#000', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'space-between' }}>
@@ -110,11 +140,15 @@ const OnlineBottomContent = () => {
             </Modal>
         )
     }
-    console.log('isShowPassengerModal', isShowSelectPassenger)
-    console.log('isShowSetPassenger', isShowSetPassenger)
-    console.log('isShowPassengerModal', isShowPassengerModal)
-    console.log('isShowSignUpUser', isShowSignUpUser)
 
+    const renderReciptsModal = () => {
+        return <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isShowReciptsModal}>
+            <ReciptsModal dismiss={() => setIsShowReciptsModal(false)} />
+        </Modal>
+    }
 
     return (
         <View style={{ backgroundColor: '#fff', flex: 1, borderRadius: 20, }}>
@@ -138,11 +172,12 @@ const OnlineBottomContent = () => {
                     <Image source={green_circle} />
                     <Text style={{ fontSize: 14, marginHorizontal: 5 }}>Current Bus Stop : Bola llori</Text>
                     <View style={{ backgroundColor: '#679C4C', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 6 }}>
-                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>3 Seats Vacant</Text>
+                        <Text onPress={() => setIsShowBusStopsList(!isShowBusStopsList)} style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>3 Seats Vacant</Text>
                     </View>
                 </View>
                 {isShowPassengerModal && renderSelectPassenger()}
-                {isShowBusStopsList ? renderBusStopsList() : null}
+                {isShowBusStopsList ? renderBusStopsList() : renderDropOffPassenger()}
+                {renderReciptsModal()}
             </View>
         </View>
     )

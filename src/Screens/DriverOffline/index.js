@@ -12,14 +12,14 @@ import BottomContentDriverOnline from './BottomContentDriverOnline';
 
 const { height } = Dimensions.get('window')
 
-const DriverOffline = () => {
+const Home = () => {
 
     const DriverOfflineBottomSheetRef = useRef();
     const DriverOnlineBottomSheetRef = useRef();
 
     const [isDriverOnline, setIsDriverOnline] = useState(false)
     useEffect(() => {
-        if (isDriverOnline) {
+        if (!isDriverOnline) {
             DriverOfflineBottomSheetRef.current.open()
         } else {
             DriverOnlineBottomSheetRef.current.open()
@@ -29,7 +29,7 @@ const DriverOffline = () => {
     const renderHeader = () => {
         return (
             <View style={{ height: 70, borderWidth: 0, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 }}>
-                <View style={{ width: 40, height: 40, borderRadius: 100, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', borderWidth: .2 }}>
+                <View style={{ width: 40, height: 40, borderRadius: 100, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', }}>
                     <Image source={menu} />
                 </View>
                 <View style={{ width: 100, height: 30, backgroundColor: '#fff', borderWidth: 0, borderRadius: 100, overflow: 'hidden', flexDirection: 'row' }}>
@@ -42,9 +42,12 @@ const DriverOffline = () => {
                 </View>
                 <View style={{}}>
                     <Switches
+                        buttonSize={24}
+                        sliderHeight={29}
+                        sliderWidth={50}
                         colorSwitchOff={'#fff'}
                         colorSwitchOn={'#fff'}
-                        buttonColor={'#5D5D5D'}
+                        buttonColor={'#679C4C'}
                         borderColor={'#000'}
                         value={isDriverOnline} shape={'pill'}
                         showText={false}
@@ -57,6 +60,8 @@ const DriverOffline = () => {
     const renderDriverOfflineBottomSheet = () => {
         return (
             <RBSheet
+                closeOnDragDown
+                customStyles={{ container: { backgroundColor: 'transparent' }, wrapper: {} }}
                 animationType={'slide'}
                 ref={DriverOfflineBottomSheetRef}
                 height={200}
@@ -64,7 +69,10 @@ const DriverOffline = () => {
                 customStyles={{
                     container: {
                         borderTopLeftRadius: 20,
-                        borderTopRightRadius: 20
+                        borderTopRightRadius: 20,
+                    },
+                    wrapper: {
+                        backgroundColor: 'transparent'
                     }
                 }}
             >
@@ -75,7 +83,6 @@ const DriverOffline = () => {
     const renderDriverOnlineBottomSheet = () => {
         return (
             <RBSheet
-                dragFromTopOnly={true}
                 animationType={'slide'}
                 ref={DriverOnlineBottomSheetRef}
                 height={580}
@@ -84,6 +91,9 @@ const DriverOffline = () => {
                     container: {
                         borderTopLeftRadius: 20,
                         borderTopRightRadius: 20
+                    },
+                    wrapper: {
+                        backgroundColor: 'transparent'
                     }
                 }}
             >
@@ -94,7 +104,7 @@ const DriverOffline = () => {
 
     const renderOfflineBanner = () => {
         return (
-            isDriverOnline ? <LinearGradient colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.1)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flexDirection: 'row', backgroundColor: '#6D6D6D', height: 64, alignItems: 'center', }}>
+            !isDriverOnline ? <LinearGradient colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.1)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flexDirection: 'row', backgroundColor: '#6D6D6D', height: 64, alignItems: 'center', }}>
                 <Image style={{ marginHorizontal: 10 }} source={offline_moon} />
                 <Text style={{ flex: 1, marginHorizontal: 15, color: '#fff', fontSize: 16 }}>{`You are offline !\nGo online to start accepting Trips`}</Text>
             </LinearGradient> : null
@@ -112,7 +122,7 @@ const DriverOffline = () => {
                     longitudeDelta: 0.00421,
                 }}
             >
-                <Marker
+                {isDriverOnline && <Marker
                     style={{}}
                     coordinate={{
                         latitude: 37.78825,
@@ -120,7 +130,7 @@ const DriverOffline = () => {
                     }}
                 >
                     <Image source={marker} />
-                </Marker>
+                </Marker>}
             </MapView>
         )
     }
@@ -138,7 +148,7 @@ const DriverOffline = () => {
     )
 }
 
-export default DriverOffline
+export default Home
 
 const styles = StyleSheet.create({
     container: {

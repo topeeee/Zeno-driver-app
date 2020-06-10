@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image } from "react-native";
 import { Text, Button } from '../../Components';
-import { bus, my_location, green_circle } from "../../images";
+import { bus, my_location, green_circle, arrow_left } from "../../images";
 
 const OnlineBottomContent = () => {
 
@@ -37,7 +37,7 @@ const OnlineBottomContent = () => {
         return (
             <View style={{ flexDirection: 'row', height: 40, backgroundColor: '#000', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'space-between' }}>
                 <View>
-                    <Text style={{ color: '#fff' }}>{'<'}</Text>
+                    <Image source={arrow_left} />
                 </View>
                 <View>
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>Drop Off Passenger</Text>

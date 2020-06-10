@@ -8,7 +8,7 @@ import { popup_banner, my_location } from "../../images";
 const SetPassengerModal = ({ showSignUpUser }) => {
     return (<View style={{ flex: 1 }}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ height: 500, backgroundColor: '#fff', width: '90%', borderRadius: 20, paddingHorizontal: 20, }}>
+            <View style={{ height: 450, backgroundColor: '#fff', width: '90%', borderRadius: 20, paddingHorizontal: 20, }}>
                 <View style={{ borderWidth: 0, marginVertical: 15, borderWidth: 0, alignItems: 'center' }}>
                     <Image source={{ uri: 'https://www.pngrepo.com/png/26995/180/avatar.png' }} style={{ width: 70, height: 70, borderRadius: 50 }} />
                     <Text style={{ fontSize: 18, marginVertical: 5 }}>Bruce Black</Text>

@@ -2,13 +2,13 @@ import React from 'react';
 import {
   SafeAreaView, StyleSheet,
 } from 'react-native';
-import { Popup } from './src/Screens';
-
-
+import { Splash, Welcome, Login, ForgetPassword, SignUp, Popup, DriverOffline , DropOfPassenger , ReciptModal} from './src/Screens';
+// import Modals from './src/Screens/Modals'
+// import OnlineBottomContent from './src/Screens/DriverOffline/OnlineBottomContent'
 const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Popup />
+      <DriverOffline />
     </SafeAreaView>
   );
 };

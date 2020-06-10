@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text, StyleSheet } from "react-native";
 
-const Textt = ({ text, style, children }) => {
+const Textt = ({ text, style, children, onPress }) => {
     return (
-        <Text style={[styles.text, style]}>{children}</Text>
+        <Text onPress={onPress} style={[styles.text, style]}>{children}</Text>
     )
 }
 

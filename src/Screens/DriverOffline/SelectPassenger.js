@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, Modal, Image, Picker } from 'react-native';
+import { View, TextInput, Modal, Image, Picker, StyleSheet } from 'react-native';
 import { Text, Button, Input } from '../../Components'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { popup_banner } from "../../images";
@@ -7,10 +7,10 @@ import { popup_banner } from "../../images";
 
 const SelectPassenger = ({ showSetPassengerModal }) => {
     return (<View style={{ flex: 1 }}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ width: '85%', height: 250, backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 20, overflow: 'hidden' }}>
-                <Text style={{ color: '#fff', fontSize: 16, paddingVertical: 10, textAlign: 'center', fontWeight: 'bold', backgroundColor: '#000', marginHorizontal: -20 }}>Select number of Passengers to Pick</Text>
-                <View style={{ flex: 1, borderWidth: 0, marginVertical: 15, borderWidth: 0, marginHorizontal: 0 }}>
+        <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                <Text style={styles.header}>Select number of Passengers to Pick</Text>
+                <View style={styles.inputContainer}>
                     <Text style={{ color: '#7A869A', fontSize: 15 }} >Number of passengers</Text>
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Picker
@@ -32,4 +32,18 @@ const SelectPassenger = ({ showSetPassengerModal }) => {
         </View>
     </View >)
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center'
+    },
+    headerContainer: {
+        width: '85%', height: 250, backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 20, overflow: 'hidden'
+    },
+    header: {
+        color: '#fff', fontSize: 16, paddingVertical: 10, textAlign: 'center', fontWeight: 'bold', backgroundColor: '#000', marginHorizontal: -20
+    },
+    inputContainer: {
+        flex: 1, borderWidth: 0, marginVertical: 15, borderWidth: 0, marginHorizontal: 0
+    }
+})
 export default SelectPassenger;

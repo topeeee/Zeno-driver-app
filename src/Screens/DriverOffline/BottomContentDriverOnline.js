@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, Modal, FlatList } from "react-native";
+import { View, Image, Modal, FlatList, StyleSheet } from "react-native";
 import { Text, Button } from '../../Components';
 import { my_location, green_circle, arrow_down } from "../../images";
 import SelectPassenger from './SelectPassenger'
@@ -18,18 +18,18 @@ const OnlineBottomContent = ({ }) => {
 
 
     const renderBusStopsList = () => {
-        return (<View style={{}}>
-            <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#000', marginHorizontal: -20, justifyContent: 'space-between', paddingHorizontal: 20, alignItems: 'center' }}>
-                <Text style={{ flex: 2, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>BUS Stops</Text>
-                <Text style={{ flex: 1, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Drop</Text>
-                <Text style={{ flex: 1, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Pick</Text>
+        return (<View>
+            <View style={styles.renderBusStopHeaderCont}>
+                <Text style={[styles.busStopHeader, { flex: 2 }]}>BUS Stops</Text>
+                <Text style={styles.busStopHeader}>Drop</Text>
+                <Text style={styles.busStopHeader}>Pick</Text>
             </View>
             <FlatList
                 style={{ height: 400 }}
                 showsVerticalScrollIndicator={false}
                 data={[1, 2, 2, 3, 3, 1, 1, 1, 1, 1]}
                 renderItem={() => (
-                    <View style={{ flexDirection: 'row', height: 60, borderWidth: 0, alignItems: 'center' }}>
+                    <View style={styles.oneBusStopCont}>
                         <View style={{ flex: 2, flexDirection: 'row' }}>
                             <Text style={{ width: 25, fontSize: 16 }}>01</Text>
                             <Text style={{ fontSize: 16 }}>Akinloye</Text>
@@ -43,36 +43,6 @@ const OnlineBottomContent = ({ }) => {
         </View>)
     }
 
-    const renderPickUpDetails = () => {
-        return (
-            <View style={{ borderWidth: 0 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F7F7F7', borderRadius: 10, paddingHorizontal: 5 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={{ uri: 'https://www.pngrepo.com/png/26995/180/avatar.png' }} style={{ width: 50, height: 50, borderRadius: 5 }} />
-                        <View style={{ flex: 1, borderWidth: 0, marginHorizontal: 10 }}>
-                            <Text style={{ fontSize: 18 }}>Akpenvwoghene </Text>
-                            <Text style={{ fontSize: 12 }}>Trip ID : 0001</Text>
-                        </View>
-                        <Text style={{ fontSize: 20 }}>₦240.00</Text>
-                    </View>
-                </View>
-                <View style={{ marginVertical: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 12, color: '#BEC2CE' }}>PICK UP BUS STOP</Text>
-                    <Text style={{ fontSize: 18, marginVertical: 5 }}>Bola ilori</Text>
-                </View>
-                <View style={{ marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
-                    <View>
-                        <Text style={{ fontWeight: 'bold', fontSize: 12, color: '#BEC2CE' }}>DROP OFF</Text>
-                        <Text style={{ fontSize: 18, marginVertical: 5 }}>Nepa</Text>
-                    </View>
-                    <Image source={arrow_down} />
-                </View>
-                <View style={{ width: '50%', alignSelf: 'center', marginVertical: 10 }}>
-                    <Button text={'Pick'} />
-                </View>
-            </View>
-        )
-    }
 
     const renderDropOffPassenger = () => {
         return (
@@ -126,14 +96,14 @@ const OnlineBottomContent = ({ }) => {
                 transparent={true}
                 visible={isShowPassengerModal}>
                 {isShowSelectPassenger && <SelectPassenger showSetPassengerModal={showSetPassengerModal} />}
-                {isShowSetPassenger && <SetPassengerModal showSignUpUser={showSignUpUser} />}
+                {isShowSetPassenger && <SetPassengerModal showSignUpUser={showSignUpUser} backToHome={backToHome} />}
                 {isShowSignUpUser && <SignUpUser dismiss={dismiss} />}
             </Modal>
         )
     }
 
     const backToHome = () => {
-        setIsShowReciptsModal(false)
+        setIsShowSetPassenger(false)
         setIsShowBusStopsList(true)
     }
 
@@ -147,7 +117,7 @@ const OnlineBottomContent = ({ }) => {
     }
 
     return (
-        <View style={{ backgroundColor: '#fff', flex: 1, borderRadius: 20, }}>
+        <View style={styles.mainCont}>
             <View style={{ marginHorizontal: 20 }}>
                 <Text style={{ color: '#000', marginVertical: 10, fontSize: 20, fontWeight: 'bold', }}  >Good afternoon, Abayomrunkoje</Text>
                 <View style={{ flexDirection: 'row', marginVertical: 15 }}>
@@ -172,4 +142,19 @@ const OnlineBottomContent = ({ }) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    mainCont: {
+        backgroundColor: '#fff', flex: 1, borderRadius: 20,
+    },
+    renderBusStopHeaderCont: {
+        flexDirection: 'row', height: 50, backgroundColor: '#000', marginHorizontal: -20, justifyContent: 'space-between', paddingHorizontal: 20, alignItems: 'center'
+    },
+    busStopHeader: {
+        flex: 1, color: '#fff', fontSize: 16, fontWeight: 'bold'
+    },
+    oneBusStopCont: {
+        flexDirection: 'row', height: 60, borderWidth: 0, alignItems: 'center'
+    }
+})
 export default OnlineBottomContent

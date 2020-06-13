@@ -1,16 +1,14 @@
 import React from 'react';
-import { View, TextInput, Modal, Image, ScrollView, Picker, FlatList } from 'react-native';
+import { View, Picker, StyleSheet } from 'react-native';
 import { Text, Button, Input } from '../../Components'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { popup_banner, my_location } from "../../images";
 
 
-const SetPassengerModal = ({ showSignUpUser }) => {
+const SetPassengerModal = ({ showSignUpUser, backToHome }) => {
     return (<View style={{ flex: 1 }}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ height: 388, backgroundColor: '#fff', width: '90%', borderRadius: 20, paddingHorizontal: 20, justifyContent: 'center' }}>
-                <Text style={{ fontSize: 18, marginVertical: 10, textAlign: 'center', fontWeight: 'bold' }}>Passenger: 2</Text>
-                <View style={{ flexDirection: 'row', borderWidth: 0, height: 90, alignItems: 'center' }}>
+        <View style={styles.container}>
+            <View style={styles.modalCont}>
+                <Text style={styles.header}>Passenger: 2</Text>
+                <View style={styles.itemCont}>
                     <View style={{ flex: 1, marginHorizontal: 5 }}>
                         <Input label={'Enter PIN'} style={{}} placeholder={'1234'} />
                     </View>
@@ -23,7 +21,7 @@ const SetPassengerModal = ({ showSignUpUser }) => {
                         </Picker>
                     </View>
                 </View>
-                <View style={{ flexDirection: 'row', borderWidth: 0, height: 90, alignItems: 'center' }}>
+                <View style={styles.itemCont}>
                     <View style={{ flex: 1, marginHorizontal: 5 }}>
                         <Input label={'Enter PIN'} style={{}} placeholder={'1234'} />
                     </View>
@@ -41,11 +39,26 @@ const SetPassengerModal = ({ showSignUpUser }) => {
                     <Button text={'Pick More'} style={{ flex: 1, marginHorizontal: 5 }} />
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Button onPress={showSignUpUser} text={'Book'} style={{ flex: 1, marginHorizontal: 5 }} />
+                    <Button onPress={backToHome} text={'Home'} style={{ flex: 1, marginHorizontal: 5 }} />
                     <View style={{ flex: 1, }} />
                 </View>
             </View>
         </View>
     </View >)
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center'
+    },
+    modalCont: {
+        height: 388, backgroundColor: '#fff', width: '90%', borderRadius: 20, paddingHorizontal: 20, justifyContent: 'center'
+    },
+    header: {
+        fontSize: 18, marginVertical: 10, textAlign: 'center', fontWeight: 'bold'
+    },
+    itemCont: {
+        flexDirection: 'row', borderWidth: 0, height: 90, alignItems: 'center'
+    }
+})
 export default SetPassengerModal;

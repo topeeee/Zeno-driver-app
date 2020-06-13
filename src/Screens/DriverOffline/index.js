@@ -3,52 +3,46 @@ import { View, StyleSheet, Image, Dimensions, ScrollView, Switch, TouchableHighl
 import { offline_moon, menu, curruncy_logo, mobile_icon, marker } from "../../images";
 import { Text } from '../../Components';
 import RBSheet from "react-native-raw-bottom-sheet";
-import BottomSheet from './BottomSheet'
 import Switches from 'react-native-switches'
 import MapView, { Marker } from 'react-native-maps';
 import LinearGradient from 'react-native-linear-gradient';
 import BottomContentDriverOffline from './BottomContentDriverOffline';
 import BottomContentDriverOnline from './BottomContentDriverOnline';
+import { Popup } from "../";
 
-const { height } = Dimensions.get('window')
-
-const DriverOffline = () => {
+const Home = () => {
 
     const DriverOfflineBottomSheetRef = useRef();
     const DriverOnlineBottomSheetRef = useRef();
 
     const [isDriverOnline, setIsDriverOnline] = useState(false)
+    const [isLocationPermissionShow, setIsLocationPermissionShow] = useState(true)
     useEffect(() => {
-        if (isDriverOnline) {
-            DriverOfflineBottomSheetRef.current.open()
-        } else {
-            DriverOnlineBottomSheetRef.current.open()
+        if (!isLocationPermissionShow) {
+            if (!isDriverOnline) {
+                DriverOfflineBottomSheetRef.current.open()
+            } else {
+                DriverOnlineBottomSheetRef.current.open()
+            }
         }
-    }, [isDriverOnline])
+    }, [isLocationPermissionShow, isDriverOnline])
 
     const renderHeader = () => {
         return (
-            <View style={{ height: 70, borderWidth: 0, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 }}>
-                <View style={{ width: 40, height: 40, borderRadius: 100, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', borderWidth: .2 }}>
+            <View style={styles.headerContainer}>
+                <View style={styles.menuIconContainer}>
                     <Image source={menu} />
                 </View>
-                <View style={{ width: 100, height: 30, backgroundColor: '#fff', borderWidth: 0, borderRadius: 100, overflow: 'hidden', flexDirection: 'row' }}>
-                    <View style={{ width: 50, height: 30, backgroundColor: '#fff', borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.switchContainer}>
+                    <View style={styles.mobileIconContainer}>
                         <Image source={mobile_icon} />
                     </View>
-                    <View style={{ width: 50, height: 30, backgroundColor: '#679C4C', borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={styles.currancyLogoContainer}>
                         <Image source={curruncy_logo} />
                     </View>
                 </View>
-                <View style={{}}>
-                    <Switches
-                        colorSwitchOff={'#fff'}
-                        colorSwitchOn={'#fff'}
-                        buttonColor={'#5D5D5D'}
-                        borderColor={'#000'}
-                        value={isDriverOnline} shape={'pill'}
-                        showText={false}
-                        onChange={() => { setIsDriverOnline(!isDriverOnline) }} />
+                <View>
+                    <Switches buttonSize={24} sliderHeight={29} sliderWidth={50} colorSwitchOff={'#fff'} colorSwitchOn={'#fff'} buttonColor={'#679C4C'} borderColor={'#000'} value={isDriverOnline} shape={'pill'} showText={false} onChange={() => { setIsDriverOnline(!isDriverOnline) }} />
                 </View>
             </View>
         )
@@ -57,6 +51,7 @@ const DriverOffline = () => {
     const renderDriverOfflineBottomSheet = () => {
         return (
             <RBSheet
+                closeOnDragDown
                 animationType={'slide'}
                 ref={DriverOfflineBottomSheetRef}
                 height={200}
@@ -65,38 +60,46 @@ const DriverOffline = () => {
                     container: {
                         borderTopLeftRadius: 20,
                         borderTopRightRadius: 20
+                    },
+                    wrapper: {
+                        backgroundColor: 'transparent'
                     }
-                }}
-            >
+                }} >
                 <BottomContentDriverOffline />
             </RBSheet>
         )
     }
+    const backToHome = () => {
+        DriverOnlineBottomSheetRef.current.close()
+        DriverOfflineBottomSheetRef.current.open()
+        setIsDriverOnline(false)
+    }
     const renderDriverOnlineBottomSheet = () => {
         return (
             <RBSheet
-                dragFromTopOnly={true}
-                animationType={'slide'}
+                dragFromTopOnly
                 ref={DriverOnlineBottomSheetRef}
-                height={580}
+                height={450}
                 openDuration={150}
                 customStyles={{
                     container: {
                         borderTopLeftRadius: 20,
                         borderTopRightRadius: 20
+                    },
+                    wrapper: {
+                        backgroundColor: 'transparent'
                     }
-                }}
-            >
-                <BottomContentDriverOnline />
+                }}>
+                <BottomContentDriverOnline setDriverOffline={backToHome} />
             </RBSheet>
         )
     }
 
     const renderOfflineBanner = () => {
         return (
-            isDriverOnline ? <LinearGradient colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.1)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flexDirection: 'row', backgroundColor: '#6D6D6D', height: 64, alignItems: 'center', }}>
+            !isDriverOnline ? <LinearGradient colors={['rgba(0,0,0,0.7)', 'rgba(0,0,0,0.1)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.offlineBannerContainer}>
                 <Image style={{ marginHorizontal: 10 }} source={offline_moon} />
-                <Text style={{ flex: 1, marginHorizontal: 15, color: '#fff', fontSize: 16 }}>{`You are offline !\nGo online to start accepting Trips`}</Text>
+                <Text style={styles.offlineBannerText}>{`You are offline !\nGo online to start accepting Trips`}</Text>
             </LinearGradient> : null
         )
     }
@@ -112,18 +115,22 @@ const DriverOffline = () => {
                     longitudeDelta: 0.00421,
                 }}
             >
-                <Marker
-                    style={{}}
+                {isDriverOnline && <Marker
                     coordinate={{
                         latitude: 37.78825,
                         longitude: -122.4324,
-                    }}
-                >
+                    }}>
                     <Image source={marker} />
-                </Marker>
+                </Marker>}
             </MapView>
         )
     }
+
+    const renderLocationPermissionModal = () => {
+        const closeLocationPermissionModal = () => setIsLocationPermissionShow(false)
+        return isLocationPermissionShow && <Popup visible={isLocationPermissionShow} closeLocationPermissionModal={closeLocationPermissionModal} />
+    }
+
     return (
         <View style={styles.container} showsVerticalScrollIndicator={false}>
             {renderMap()}
@@ -134,15 +141,38 @@ const DriverOffline = () => {
                 <Text style={{ textAlign: 'center', marginVertical: 10, color: '#000' }}>Offline Booking</Text>
                 {renderOfflineBanner()}
             </LinearGradient>
+            {renderLocationPermissionModal()}
         </View >
     )
 }
 
-export default DriverOffline
+export default Home
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff'
+    },
+    headerContainer: {
+        height: 70, borderWidth: 0, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15
+    },
+    menuIconContainer: {
+        width: 40, height: 40, borderRadius: 100, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center',
+    },
+    switchContainer: {
+        width: 100, height: 30, backgroundColor: '#fff', borderWidth: 0, borderRadius: 100, overflow: 'hidden', flexDirection: 'row'
+    },
+    mobileIconContainer: {
+        width: 50, height: 30, backgroundColor: '#fff', borderRadius: 100, justifyContent: 'center', alignItems: 'center'
+    },
+    currancyLogoContainer: {
+        width: 50, height: 30, backgroundColor: '#679C4C', borderRadius: 100, justifyContent: 'center', alignItems: 'center'
+    },
+
+    offlineBannerContainer: {
+        flexDirection: 'row', backgroundColor: '#6D6D6D', height: 64, alignItems: 'center',
+    },
+    offlineBannerText: {
+        flex: 1, marginHorizontal: 15, color: '#fff', fontSize: 16
     }
 })

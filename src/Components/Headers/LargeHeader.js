@@ -1,14 +1,28 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import { Text } from '../';
 import { logo_mini } from '../../images'
 const LargeHeader = ({ heading, subHeadeing, titleImageSource }) => {
     return (
-        <View style={{ borderWidth: 0 }}>
-            <Image source={titleImageSource ? titleImageSource : logo_mini} style={{ marginVertical: 5, }} resizeMode={'contain'} />
-            {subHeadeing && <Text style={{ color: '#000', marginVertical: 5, fontSize: 16, }} >{subHeadeing}</Text>}
-            { heading&& <Text style={{ color: '#000', marginVertical: 5, fontSize: 24, fontWeight: 'bold' }}  >{heading}</Text>}
+        <View style={{}}>
+            <Image source={titleImageSource ? titleImageSource : logo_mini} style={styles.imageLogo} resizeMode={'contain'} />
+            {subHeadeing && <Text style={styles.subHeading} >{subHeadeing}</Text>}
+            {heading && <Text style={styles.heading}  >{heading}</Text>}
         </View>
     )
 }
+const styles = StyleSheet.create({
+    container: {
+        marginVertical: 20
+    },
+    imageLogo: {
+        marginVertical: 5,
+    },
+    subHeadeing: {
+        color: '#000', marginVertical: 5, fontSize: 16,
+    },
+    heading: {
+        color: '#000', marginVertical: 5, fontSize: 24, fontWeight: 'bold'
+    }
+})
 export default LargeHeader;

@@ -5,7 +5,7 @@ import { Text } from '../../Components';
 import { SimpleHeader, LargeHeader, Button, Input, GoogleLoginButton, FacebookLoginButton } from '../../Components'
 
 
-const Login = () => {
+const Login = ({ navigation }) => {
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <View style={{ marginHorizontal: 25 }}>
@@ -15,8 +15,8 @@ const Login = () => {
             <View style={{ marginHorizontal: 25, }}>
                 <Input label={'Email Address'} value={'jacksparrow@gmail.com'} style={{ marginVertical: 5 }} />
                 <Input label={'Password'} value={'************'} style={{ marginVertical: 5 }} />
-                <Text style={{ textAlign: 'center', marginVertical: 5 }}>{`Forget password?`}</Text>
-                <Button text={'SIGN IN'} style={{ marginVertical: 5 }} />
+                <Text onPress={() => navigation.navigate('ForgetPassword')} style={{ textAlign: 'center', marginVertical: 5 }}>{`Forget password?`}</Text>
+                <Button onPress={() => navigation.navigate('Home')} text={'SIGN IN'} style={{ marginVertical: 5 }} />
                 <Text style={{ textAlign: 'center', marginVertical: 5 }}>{`Or Login with`}</Text>
                 <GoogleLoginButton style={{ marginVertical: 5 }} />
                 <FacebookLoginButton style={{ marginVertical: 5 }} />

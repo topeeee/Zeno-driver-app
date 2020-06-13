@@ -19,6 +19,7 @@ import mobile_icon from './mobile_icon.png';
 import marker from './marker.png';
 import arrow_left from './arrow_left.png';
 import arrow_down from './arrow_down.png';
+import arrow_back_left from './arrow_back_left.png';
 
 export {
     logo,
@@ -41,5 +42,6 @@ export {
     mobile_icon,
     marker,
     arrow_left,
-    arrow_down
+    arrow_down,
+    arrow_back_left
 }

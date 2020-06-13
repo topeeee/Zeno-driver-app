@@ -6,7 +6,7 @@ import { SimpleHeader, LargeHeader, Button } from '../../Components'
 
 
 const { width } = Dimensions.get('window')
-const Welcome = () => {
+const Welcome = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={{ marginHorizontal: 25 }}>
@@ -17,8 +17,8 @@ const Welcome = () => {
                 <Image style={{ width: width, height: 270 }} resizeMode={'contain'} source={welcome_banner} />
             </View>
             <View style={{ marginHorizontal: 25 }}>
-                <Button text={'SIGN UP'} />
-                <Text style={{ textAlign: 'center', marginVertical: 15, fontSize: 15 }}>Already have an account? Sign in.</Text>
+                <Button onPress={() => navigation.navigate('SignUp')} text={'SIGN UP'} />
+                <Text onPress={() => navigation.navigate('Login')} style={{ textAlign: 'center', marginVertical: 15, fontSize: 15 }}>Already have an account? Sign in.</Text>
                 <View style={{ marginVertical: 10, }}>
                     <Text style={{ textAlign: 'center', }}>{`By Signing in, you agree to Zeno's`}</Text>
                     <Text style={{ textAlign: 'center', color: '#008751', }}>{`terms and conditions.`}</Text>

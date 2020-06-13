@@ -9,7 +9,7 @@ import MapView, { Marker } from 'react-native-maps';
 import LinearGradient from 'react-native-linear-gradient';
 import BottomContentDriverOffline from './BottomContentDriverOffline';
 import BottomContentDriverOnline from './BottomContentDriverOnline';
-
+import { Popup } from "../";
 const { height } = Dimensions.get('window')
 
 const Home = () => {
@@ -18,13 +18,16 @@ const Home = () => {
     const DriverOnlineBottomSheetRef = useRef();
 
     const [isDriverOnline, setIsDriverOnline] = useState(false)
+    const [isLocationPermissionShow, setIsLocationPermissionShow] = useState(true)
     useEffect(() => {
-        if (!isDriverOnline) {
-            DriverOfflineBottomSheetRef.current.open()
-        } else {
-            DriverOnlineBottomSheetRef.current.open()
+        if (!isLocationPermissionShow) {
+            if (!isDriverOnline) {
+                DriverOfflineBottomSheetRef.current.open()
+            } else {
+                DriverOnlineBottomSheetRef.current.open()
+            }
         }
-    }, [isDriverOnline])
+    }, [isLocationPermissionShow, isDriverOnline])
 
     const renderHeader = () => {
         return (
@@ -61,7 +64,6 @@ const Home = () => {
         return (
             <RBSheet
                 closeOnDragDown
-                customStyles={{ container: { backgroundColor: 'transparent' }, wrapper: {} }}
                 animationType={'slide'}
                 ref={DriverOfflineBottomSheetRef}
                 height={200}
@@ -83,9 +85,11 @@ const Home = () => {
     const renderDriverOnlineBottomSheet = () => {
         return (
             <RBSheet
-                animationType={'slide'}
+                dragFromTopOnly
+                // closeOnDragDown={false}
+                // animationType={'slide'}
                 ref={DriverOnlineBottomSheetRef}
-                height={580}
+                height={450}
                 openDuration={150}
                 customStyles={{
                     container: {
@@ -123,17 +127,22 @@ const Home = () => {
                 }}
             >
                 {isDriverOnline && <Marker
-                    style={{}}
                     coordinate={{
                         latitude: 37.78825,
                         longitude: -122.4324,
-                    }}
-                >
+                    }}>
                     <Image source={marker} />
                 </Marker>}
             </MapView>
         )
     }
+
+    const renderLocationPermissionModal = () => {
+        const closeLocationPermissionModal = () => setIsLocationPermissionShow(false)
+
+        return isLocationPermissionShow && <Popup visible={isLocationPermissionShow} closeLocationPermissionModal={closeLocationPermissionModal} />
+    }
+
     return (
         <View style={styles.container} showsVerticalScrollIndicator={false}>
             {renderMap()}
@@ -144,6 +153,7 @@ const Home = () => {
                 <Text style={{ textAlign: 'center', marginVertical: 10, color: '#000' }}>Offline Booking</Text>
                 {renderOfflineBanner()}
             </LinearGradient>
+            {renderLocationPermissionModal()}
         </View >
     )
 }

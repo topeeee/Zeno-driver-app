@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { View, Image, ScrollView, TouchableOpacity, Modal, FlatList, Picker } from "react-native";
 import { Text, Button } from '../../Components';
 import { bus, my_location, green_circle, arrow_left, arrow_down } from "../../images";
 import SelectPassenger from './SelectPassenger'
@@ -19,22 +19,28 @@ const OnlineBottomContent = () => {
 
 
     const renderBusStopsList = () => {
-        return (<View style={{ flex: 1 }}>
+        return (<View style={{}}>
             <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#000', marginHorizontal: -20, justifyContent: 'space-between', paddingHorizontal: 20, alignItems: 'center' }}>
                 <Text style={{ flex: 2, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>BUS Stops</Text>
                 <Text style={{ flex: 1, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Drop</Text>
                 <Text style={{ flex: 1, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Pick</Text>
             </View>
-            {[1, 1, 1].map(x => (
-                <View style={{ flexDirection: 'row', height: 60, borderWidth: 0, alignItems: 'center' }}>
-                    <View style={{ flex: 2, flexDirection: 'row' }}>
-                        <Text style={{ width: 25, fontSize: 16 }}>01</Text>
-                        <Text style={{ fontSize: 16 }}>Akinloye</Text>
+            <FlatList
+                style={{ height: 400 }}
+                showsVerticalScrollIndicator={false}
+                data={[1, 2, 2, 3, 3, 1, 1, 1, 1, 1]}
+                renderItem={() => (
+                    <View style={{ flexDirection: 'row', height: 60, borderWidth: 0, alignItems: 'center' }}>
+                        <View style={{ flex: 2, flexDirection: 'row' }}>
+                            <Text style={{ width: 25, fontSize: 16 }}>01</Text>
+                            <Text style={{ fontSize: 16 }}>Akinloye</Text>
+                        </View>
+                        <Text style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#FF0000', color: '#fff', fontWeight: 'bold', }}>0</Text>
+                        <Text onPress={() => { setIsShowSelectPassenger(true); setIsShowPassengerModal(true) }} style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#679C4C', color: '#fff', fontWeight: 'bold', }}>PICK</Text>
                     </View>
-                    <Text style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#FF0000', color: '#fff', fontWeight: 'bold', }}>0</Text>
-                    <Text onPress={() => { setIsShowSelectPassenger(true); setIsShowPassengerModal(true) }} style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#679C4C', color: '#fff', fontWeight: 'bold', }}>PICK</Text>
-                </View>
-            ))}
+                )}
+            />
+
         </View>)
     }
 
@@ -152,13 +158,8 @@ const OnlineBottomContent = () => {
 
     return (
         <View style={{ backgroundColor: '#fff', flex: 1, borderRadius: 20, }}>
-            {renderPickUpByPassenger()}
             <View style={{ marginHorizontal: 20 }}>
                 <Text style={{ color: '#000', marginVertical: 10, fontSize: 20, fontWeight: 'bold', }}  >Good afternoon, Abayomrunkoje</Text>
-                <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-                    <Image source={bus} />
-                    <Text style={{ color: '#000', fontSize: 16, flex: 1, marginHorizontal: 10 }}>AA79 - AKK</Text>
-                </View>
                 <View style={{ flexDirection: 'row', marginVertical: 15 }}>
                     <Text style={{ fontSize: 16 }}>Zone:</Text>
                     <Text style={{ fontWeight: 'bold', marginHorizontal: 10, fontSize: 16 }}>01</Text>
@@ -166,7 +167,6 @@ const OnlineBottomContent = () => {
                     <Text style={{ fontSize: 16 }}>Area:</Text>
                     <Text style={{ fontWeight: 'bold', marginHorizontal: 10, fontSize: 16 }}>Ikeja</Text>
                 </View>
-                <Text style={{ fontSize: 16 }}>Rout:</Text>
                 <Text style={{ marginVertical: 5, fontSize: 16, flexDirection: 'row' }}>Opebi: <Image source={my_location} /> -------------- <Image source={my_location} /> Oluyole, Ojota</Text>
                 <View style={{ marginVertical: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Image source={green_circle} />

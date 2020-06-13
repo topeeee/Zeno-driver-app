@@ -31,6 +31,7 @@ const ReciptsModal = ({ dismiss }) => {
                     <View style={{ backgroundColor: '#C2354D', paddingHorizontal: 10, paddingVertical: 9, borderRadius: 6, marginVertical: 5 }}>
                         <Text onPress={dismiss} style={{ color: '#fff', fontSize: 12, fontWeight: 'bold', textAlign: 'center' }}>Drop more Passengers</Text>
                     </View>
+                    <Text onPress={dismiss} style={{ textAlign: 'center', fontSize: 14, marginVertical: 15, color: '#7A869A' }}>Back to home</Text>
                 </View>
             </View>
         </View>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { Splash, Welcome, Login, ForgetPassword, SignUp, Popup, Home, DropOfPassenger, ReciptModal } from './src/Screens';
+import { Splash, Welcome, Login, ForgetPassword, SignUp, Home } from './src/Screens';
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';

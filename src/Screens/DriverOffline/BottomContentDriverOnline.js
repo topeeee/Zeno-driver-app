@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { View, Image, ScrollView, TouchableOpacity, Modal, FlatList, Picker } from "react-native";
+import { View, Image, Modal, FlatList } from "react-native";
 import { Text, Button } from '../../Components';
-import { bus, my_location, green_circle, arrow_left, arrow_down } from "../../images";
+import { my_location, green_circle, arrow_down } from "../../images";
 import SelectPassenger from './SelectPassenger'
 import SetPassengerModal from './SetPassengerModal'
-import RBSheet from "react-native-raw-bottom-sheet";
 import SignUpUser from './SignUpUser'
 import ReciptsModal from './ReciptModal'
 
-const OnlineBottomContent = () => {
+const OnlineBottomContent = ({ }) => {
 
     const [isShowBusStopsList, setIsShowBusStopsList] = useState(true)
     const [isShowSelectPassenger, setIsShowSelectPassenger] = useState(true)
@@ -35,7 +34,7 @@ const OnlineBottomContent = () => {
                             <Text style={{ width: 25, fontSize: 16 }}>01</Text>
                             <Text style={{ fontSize: 16 }}>Akinloye</Text>
                         </View>
-                        <Text style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#FF0000', color: '#fff', fontWeight: 'bold', }}>0</Text>
+                        <Text onPress={() => setIsShowBusStopsList(!isShowBusStopsList)} style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#FF0000', color: '#fff', fontWeight: 'bold', }}>0</Text>
                         <Text onPress={() => { setIsShowSelectPassenger(true); setIsShowPassengerModal(true) }} style={{ flex: 1, fontSize: 14, flex: 1, textAlign: 'center', marginHorizontal: 10, paddingVertical: 7, borderRadius: 5, backgroundColor: '#679C4C', color: '#fff', fontWeight: 'bold', }}>PICK</Text>
                     </View>
                 )}
@@ -103,20 +102,6 @@ const OnlineBottomContent = () => {
         )
     }
 
-    const renderPickUpByPassenger = () => {
-        return (
-            <View style={{ flexDirection: 'row', height: 40, backgroundColor: '#000', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'space-between' }}>
-                <View>
-                    <Image source={arrow_left} />
-                </View>
-                <View>
-                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Pick up Passenger</Text>
-                </View>
-                <View />
-            </View>
-        )
-    }
-
     const showSetPassengerModal = () => {
         setIsShowSelectPassenger(false)
         setIsShowSetPassenger(true)
@@ -147,12 +132,17 @@ const OnlineBottomContent = () => {
         )
     }
 
+    const backToHome = () => {
+        setIsShowReciptsModal(false)
+        setIsShowBusStopsList(true)
+    }
+
     const renderReciptsModal = () => {
         return <Modal
             animationType="slide"
             transparent={true}
             visible={isShowReciptsModal}>
-            <ReciptsModal dismiss={() => setIsShowReciptsModal(false)} />
+            <ReciptsModal dismiss={backToHome} />
         </Modal>
     }
 
@@ -172,7 +162,7 @@ const OnlineBottomContent = () => {
                     <Image source={green_circle} />
                     <Text style={{ fontSize: 14, marginHorizontal: 5 }}>Current Bus Stop : Bola llori</Text>
                     <View style={{ backgroundColor: '#679C4C', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 6 }}>
-                        <Text onPress={() => setIsShowBusStopsList(!isShowBusStopsList)} style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>3 Seats Vacant</Text>
+                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>3 Seats Vacant</Text>
                     </View>
                 </View>
                 {isShowPassengerModal && renderSelectPassenger()}

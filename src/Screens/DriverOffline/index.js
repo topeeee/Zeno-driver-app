@@ -36,6 +36,7 @@ const Home = () => {
                 <View style={styles.switchContainer}>
                     <View style={styles.mobileIconContainer}>
                         <Image source={mobile_icon} />
+                        <Text>2</Text>
                     </View>
                     <View style={styles.currancyLogoContainer}>
                         <Image source={curruncy_logo} />
@@ -79,7 +80,7 @@ const Home = () => {
             <RBSheet
                 dragFromTopOnly
                 ref={DriverOnlineBottomSheetRef}
-                height={500}
+                height={550}
                 openDuration={150}
                 customStyles={{
                     container: {
@@ -87,7 +88,7 @@ const Home = () => {
                         borderTopRightRadius: 20
                     },
                     wrapper: {
-                        backgroundColor: 'transparent'
+                        // backgroundColor: 'transparent'
                     }
                 }}>
                 <BottomContentDriverOnline setDriverOffline={backToHome} />
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
         width: 100, height: 30, backgroundColor: '#fff', borderWidth: 0, borderRadius: 100, overflow: 'hidden', flexDirection: 'row'
     },
     mobileIconContainer: {
-        width: 50, height: 30, backgroundColor: '#fff', borderRadius: 100, justifyContent: 'center', alignItems: 'center'
+        flexDirection: 'row', width: 50, height: 30, backgroundColor: '#fff', borderRadius: 100, justifyContent: 'space-around', alignItems: 'center'
     },
     currancyLogoContainer: {
         width: 50, height: 30, backgroundColor: '#679C4C', borderRadius: 100, justifyContent: 'center', alignItems: 'center'

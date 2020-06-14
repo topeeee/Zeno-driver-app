@@ -35,7 +35,7 @@ const SetPassengerModal = ({ showSignUpUser, backToHome }) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Button onPress={showSignUpUser} text={'Sign Up User'} style={{ flex: 1, marginHorizontal: 5 }} />
+                    <Button onPress={backToHome} text={'Sign Up User'} style={{ flex: 1, marginHorizontal: 5 }} />
                     <Button text={'Pick More'} style={{ flex: 1, marginHorizontal: 5 }} />
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

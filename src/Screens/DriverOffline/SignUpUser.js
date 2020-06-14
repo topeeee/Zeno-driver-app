@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text, Button, Input } from '../../Components'
 
-const PassengerPickupModal = ({ dismiss }) => {
+const PassengerPickupModal = ({ dismiss, hideSignUpUser }) => {
     return (
         <View style={{ flex: 1 }}>
             <View style={{
@@ -18,7 +18,7 @@ const PassengerPickupModal = ({ dismiss }) => {
                             <Input label={'Address'} style={{}} placeholder={''} />
                             <Input label={'Select Drop Bus Stop'} style={{}} placeholder={''} />
                         </ScrollView>
-                        <Button onPress={dismiss} text={'Sign Up'} style={{}} />
+                        <Button onPress={hideSignUpUser} text={'Sign Up'} style={{}} />
                     </View>
                 </View>
             </View>

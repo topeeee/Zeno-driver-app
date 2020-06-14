@@ -88,6 +88,11 @@ const OnlineBottomContent = ({ }) => {
             setIsShowPassengerModal(false)
         }, 0)
     }
+    const hideSignUpUser = () => {
+        setIsShowSignUpUser(false)
+        setIsShowSetPassenger(false)
+        setIsShowSetPassenger(true)
+    }
     const renderSelectPassenger = () => {
         return (
             <Modal
@@ -96,7 +101,7 @@ const OnlineBottomContent = ({ }) => {
                 visible={isShowPassengerModal}>
                 {isShowSelectPassenger && <SelectPassenger showSetPassengerModal={showSetPassengerModal} />}
                 {isShowSetPassenger && <SetPassengerModal showSignUpUser={showSignUpUser} backToHome={backToHome} />}
-                {isShowSignUpUser && <SignUpUser dismiss={dismiss} />}
+                {isShowSignUpUser && <SignUpUser dismiss={dismiss} hideSignUpUser={hideSignUpUser}/>}
             </Modal>
         )
     }

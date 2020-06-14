@@ -5,8 +5,10 @@ import { Text, Button, Input } from '../../Components'
 const PassengerPickupModal = ({ dismiss }) => {
     return (
         <View style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <View style={styles.modalCont}>
+            <View style={{
+                flex: 1, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center'
+            }}>
+                <View style={styles.modal}>
                     <Text style={{ color: '#fff', fontSize: 16, paddingVertical: 10, textAlign: 'center', fontWeight: 'bold', backgroundColor: '#000', marginHorizontal: -20 }}>SignUp new User</Text>
                     <View style={styles.listCont}>
                         <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%', borderWidth: 0 }}>

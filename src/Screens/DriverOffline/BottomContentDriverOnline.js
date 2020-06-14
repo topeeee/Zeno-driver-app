@@ -16,7 +16,6 @@ const OnlineBottomContent = ({ }) => {
     const [isShowSignUpUser, setIsShowSignUpUser] = useState(false)
     const [isShowReciptsModal, setIsShowReciptsModal] = useState(false)
 
-
     const renderBusStopsList = () => {
         return (<View>
             <View style={styles.renderBusStopHeaderCont}>
@@ -87,7 +86,7 @@ const OnlineBottomContent = ({ }) => {
             setIsShowSetPassenger(false)
             setIsShowSignUpUser(false)
             setIsShowPassengerModal(false)
-        }, 200)
+        }, 0)
     }
     const renderSelectPassenger = () => {
         return (
@@ -105,6 +104,10 @@ const OnlineBottomContent = ({ }) => {
     const backToHome = () => {
         setIsShowSetPassenger(false)
         setIsShowBusStopsList(true)
+        setIsShowSelectPassenger(true)
+        setIsShowPassengerModal(false)
+        setIsShowSignUpUser(false)
+        setIsShowReciptsModal(false)
     }
 
     const renderReciptsModal = () => {

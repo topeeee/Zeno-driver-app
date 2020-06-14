@@ -79,7 +79,7 @@ const Home = () => {
             <RBSheet
                 dragFromTopOnly
                 ref={DriverOnlineBottomSheetRef}
-                height={450}
+                height={500}
                 openDuration={150}
                 customStyles={{
                     container: {

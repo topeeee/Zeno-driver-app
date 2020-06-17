@@ -24,11 +24,11 @@ const Login = ({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate('Home');
-    }
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     navigation.navigate('Home');
+  //   }
+  // }, [isAuthenticated]);
 
 
   return (

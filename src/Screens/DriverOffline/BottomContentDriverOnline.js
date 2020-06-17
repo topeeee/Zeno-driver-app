@@ -18,6 +18,11 @@ const OnlineBottomContent = ({driverEmail}) => {
   const [isShowPassengerModal, setIsShowPassengerModal] = useState(false);
   const [isShowSignUpUser, setIsShowSignUpUser] = useState(false);
   const [isShowReciptsModal, setIsShowReciptsModal] = useState(false);
+  const [driverVehicle, setDriverVehicle] = useState([]);
+  const [driverId, setDriverId] = useState('');
+  const [vehicle, setVehicle] = useState([]);
+  const [vehicleId, setVehicleId] = useState('');
+  const [capacity, setCapacity] = useState('');
 
   const [driver, setDriver] = useState([]);
   const [driverName, setDriverName] = useState('');
@@ -44,9 +49,55 @@ const OnlineBottomContent = ({driverEmail}) => {
 
   function getDriver() {
     axios.get(`${api.driver}/api/drivers/`).then((res) => {
+      res.data.map((driver) => {
+        if (driver.email == driverEmail) {
+          setDriverId(driver.id);
+        }
+      });
       setDriver(res.data);
     });
   }
+  function getDriverVehicle(id) {
+    axios
+      .get(`http://165.22.116.11:7054/api/vehicle/?driverId=${id}`)
+      .then((res) => {
+        res.data.map((data) => {
+          setVehicleId(data.vehicleId);
+
+        });
+
+      });
+  }
+
+  function getVehicle(id) {
+    axios.get(`http://165.22.116.11:7050/api/vehicles/${id}/`).then((res) => {
+      setVehicle(res.data);
+      setCapacity(res.data.capacity);
+    });
+  }
+
+  function getBusStop() {
+    axios.get('http://165.22.116.11:7108/api/me/busstops/')
+        .then(res=> {
+          console.log(res.data, 'fdfdfcxvcvcxc')
+        })
+  }
+
+  useEffect(()=> {
+    getBusStop()
+  },[])
+
+  useEffect(() => {
+    if (driverId) {
+      getDriverVehicle(driverId);
+    }
+  },[driverId]);
+
+  useEffect(() => {
+    if (vehicleId) {
+      getVehicle(vehicleId);
+    }
+  },[vehicleId]);
 
   const renderBusStopsList = () => {
     return (
@@ -263,17 +314,17 @@ const OnlineBottomContent = ({driverEmail}) => {
           <Text style={{fontSize: 16}}>Zone:</Text>
           <Text
             style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 16}}>
-              {driverName.zone}
+            {driverName.zone}
           </Text>
           <Text style={{marginHorizontal: 10}}>|</Text>
           <Text style={{fontSize: 16}}>Area:</Text>
           <Text
             style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 16}}>
-              {driverName.area}
+            {driverName.area}
           </Text>
         </View>
         <Text style={{marginVertical: 5, fontSize: 16, flexDirection: 'row'}}>
-            {driverName.route}: <Image source={my_location} /> --------------{' '}
+          {driverName.route}: <Image source={my_location} /> --------------{' '}
           <Image source={my_location} /> {driverName.route}
         </Text>
         <View
@@ -295,7 +346,7 @@ const OnlineBottomContent = ({driverEmail}) => {
               borderRadius: 6,
             }}>
             <Text style={{color: '#fff', fontSize: 12, fontWeight: 'bold'}}>
-              3 Seats Vacant
+              {capacity} Seats Vacant
             </Text>
           </View>
         </View>

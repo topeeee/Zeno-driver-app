@@ -1,13 +1,48 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import {Text} from '../../Components';
 import {offline_moon_black} from '../../images';
 import {connect} from 'react-redux';
+import {getDrivers} from '../../store/actions/driverAction';
+import axios from 'axios';
+import api from '../../environments/environment';
 
-const BottomContentDriverOffline = ({driverEmail}) => {
+const BottomContentDriverOffline = ({driverEmail, isDriver, drivers}) => {
+  const [driver, setDriver] = useState([]);
+  const [driverName, setDriverName] = useState('');
+  const [isEmail, setIsEmail] = useState('');
+  useEffect(() => {
+    getDriver()
+  }, []);
+
+  useEffect(() => {
+    if(driverEmail) {
+      setIsEmail(driverEmail)
+    }
+      }, [driverEmail]);
+
+
+  useEffect(() => {
+    if (driver) {
+      driver.map((driverName) => {
+        if(driverName.email == isEmail){
+          setDriverName(driverName);
+        }
+      });
+    }
+  }, [driver]);
+
+  function getDriver() {
+    axios.get(`${api.driver}/api/drivers/`).then((res) => {
+      setDriver(res.data);
+    });
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Good afternoon </Text>
+      <Text style={styles.heading} onPress={() => getDriver()}>
+        Good afternoon {driverName.firstname}
+      </Text>
       <Image style={styles.imageMoon} source={offline_moon_black} />
       <Text style={styles.subHeading}>
         {'You are offline !\nGo online to start acceptingTrips'}
@@ -42,8 +77,18 @@ const styles = StyleSheet.create({
   },
 });
 
+function mapDispatchToProps(dispatch) {
+  return {
+    isDriver: () => dispatch(getDrivers),
+  };
+}
+
 const mapStateToProps = (state) => ({
   driverEmail: state.auth.driverEmail,
+  drivers: state.driver.drivers,
 });
 
-export default connect(mapStateToProps)(BottomContentDriverOffline);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(BottomContentDriverOffline);

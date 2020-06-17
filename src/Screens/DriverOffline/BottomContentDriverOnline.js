@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Image, Modal, FlatList, StyleSheet} from 'react-native';
 import {Text, Button} from '../../Components';
 import {my_location, green_circle, arrow_down} from '../../images';
@@ -6,14 +6,47 @@ import SelectPassenger from './SelectPassenger';
 import SetPassengerModal from './SetPassengerModal';
 import SignUpUser from './SignUpUser';
 import ReciptsModal from './ReciptModal';
+import axios from 'axios';
+import api from '../../environments/environment';
+import {getDrivers} from '../../store/actions/driverAction';
+import {connect} from 'react-redux';
 
-const OnlineBottomContent = ({}) => {
+const OnlineBottomContent = ({driverEmail}) => {
   const [isShowBusStopsList, setIsShowBusStopsList] = useState(true);
   const [isShowSelectPassenger, setIsShowSelectPassenger] = useState(true);
   const [isShowSetPassenger, setIsShowSetPassenger] = useState(false);
   const [isShowPassengerModal, setIsShowPassengerModal] = useState(false);
   const [isShowSignUpUser, setIsShowSignUpUser] = useState(false);
   const [isShowReciptsModal, setIsShowReciptsModal] = useState(false);
+
+  const [driver, setDriver] = useState([]);
+  const [driverName, setDriverName] = useState('');
+  const [isEmail, setIsEmail] = useState('');
+  useEffect(() => {
+    getDriver();
+  }, []);
+
+  useEffect(() => {
+    if (driverEmail) {
+      setIsEmail(driverEmail);
+    }
+  }, [driverEmail]);
+
+  useEffect(() => {
+    if (driver) {
+      driver.map((driverName) => {
+        if (driverName.email == isEmail) {
+          setDriverName(driverName);
+        }
+      });
+    }
+  }, [driver]);
+
+  function getDriver() {
+    axios.get(`${api.driver}/api/drivers/`).then((res) => {
+      setDriver(res.data);
+    });
+  }
 
   const renderBusStopsList = () => {
     return (
@@ -224,24 +257,24 @@ const OnlineBottomContent = ({}) => {
             fontSize: 20,
             fontWeight: 'bold',
           }}>
-          Good afternoon, Abayomrunkoje
+          Good afternoon, {driverName.firstname}
         </Text>
         <View style={{flexDirection: 'row', marginVertical: 15}}>
           <Text style={{fontSize: 16}}>Zone:</Text>
           <Text
             style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 16}}>
-            01
+              {driverName.zone}
           </Text>
           <Text style={{marginHorizontal: 10}}>|</Text>
           <Text style={{fontSize: 16}}>Area:</Text>
           <Text
             style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 16}}>
-            Ikeja
+              {driverName.area}
           </Text>
         </View>
         <Text style={{marginVertical: 5, fontSize: 16, flexDirection: 'row'}}>
-          Opebi: <Image source={my_location} /> --------------{' '}
-          <Image source={my_location} /> Oluyole, Ojota
+            {driverName.route}: <Image source={my_location} /> --------------{' '}
+          <Image source={my_location} /> {driverName.route}
         </Text>
         <View
           style={{
@@ -302,4 +335,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-export default OnlineBottomContent;
+
+function mapDispatchToProps(dispatch) {
+  return {
+    isDriver: () => dispatch(getDrivers),
+  };
+}
+
+const mapStateToProps = (state) => ({
+  driverEmail: state.auth.driverEmail,
+  drivers: state.driver.drivers,
+});
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(OnlineBottomContent);

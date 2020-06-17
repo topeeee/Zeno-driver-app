@@ -6,7 +6,7 @@ import {
 } from '../actionTypes';
 
 const initialState = {
-  isAuthenticated: null,
+  isAuthenticated: false,
   loginResponse: null,
   driverEmail: null,
   loading: false,

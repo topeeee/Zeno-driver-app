@@ -14,11 +14,14 @@ export const LogIn = (username, password) => async (dispatch) => {
   try {
     const res = await axios.post(`${api.login}/api/login/`, body);
     const token = res.data.Authorized;
-    dispatch(storeToken(token));
+    // dispatch(storeToken(token));
     dispatch({
       type: LOGIN,
       payload: res.data,
     });
+    if (res) {
+      dispatch(storeToken(token));
+    }
   } catch (err) {
     dispatch({
       type: AUTH_ERROR,

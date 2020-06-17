@@ -30,10 +30,6 @@ const Login = ({
     }
   }, [isAuthenticated]);
 
-  useEffect(() => {
-    if (driverEmail){
-    }
-  },[driverEmail]);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -66,7 +62,10 @@ const Login = ({
         {/*  {'Forget password?'}*/}
         {/*</Text>*/}
         <Button
-          onPress={() => isLogIn(username, password)}
+          onPress={() => {
+            isLogIn(username, password);
+            navigation.navigate('Home');
+          }}
           text={'SIGN IN'}
           style={{marginVertical: 5}}
         />
@@ -99,7 +98,6 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
-  errors: state.auth.errors,
   loginResponse: state.auth.loginResponse,
   driverEmail: state.auth.driverEmail,
 });

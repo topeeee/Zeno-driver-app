@@ -12,7 +12,8 @@ const Splash = ({navigation}) => {
       let userData = await AsyncStorage.getItem('userData');
       let data = JSON.parse(userData);
       if (data) {
-        navigation.navigate('Home');
+          navigation.navigate('Login');
+        // navigation.navigate('Home');
       } else {
         navigation.navigate('Login');
       }

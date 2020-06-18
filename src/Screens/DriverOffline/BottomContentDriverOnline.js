@@ -62,7 +62,7 @@ const OnlineBottomContent = ({driverEmail}) => {
   }
   function getDriverVehicle(id) {
     axios
-      .get(`http://165.22.116.11:7054/api/vehicle/?driverId=${id}`)
+      .get(`${api.driverVehicle}/api/vehicle/?driverId=${id}`)
       .then((res) => {
         res.data.map((data) => {
           setVehicleId(data.vehicleId);
@@ -71,18 +71,16 @@ const OnlineBottomContent = ({driverEmail}) => {
   }
 
   function getVehicle(id) {
-    axios.get(`http://165.22.116.11:7050/api/vehicles/${id}/`).then((res) => {
+    axios.get(`${api.vehicle}/api/vehicles/${id}/`).then((res) => {
       setVehicle(res.data);
       setCapacity(res.data.capacity);
     });
   }
 
   function getBusStop(route) {
-    axios
-      .get(`http://165.22.116.11:7108/api/routecode/?search=${route}`)
-      .then((res) => {
-        setBusStop(res.data);
-      });
+    axios.get(`${api.busStop}/api/routecode/?search=${route}`).then((res) => {
+      setBusStop(res.data);
+    });
   }
 
   function formatAMPM(date) {

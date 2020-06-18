@@ -20,15 +20,17 @@ const OnlineBottomContent = ({driverEmail}) => {
   const [isShowReciptsModal, setIsShowReciptsModal] = useState(false);
   const [driverVehicle, setDriverVehicle] = useState([]);
   const [driverId, setDriverId] = useState('');
+  const [driverPin, setDriverPin] = useState('');
   const [driverRoute, setDriverRoute] = useState('');
   const [vehicle, setVehicle] = useState([]);
   const [busStop, setBusStop] = useState([]);
   const [vehicleId, setVehicleId] = useState('');
-  const [capacity, setCapacity] = useState('');
+  const [capacity, setCapacity] = useState(null);
   const [greeting, setGreeting] = useState('');
   const [driver, setDriver] = useState([]);
   const [driverName, setDriverName] = useState('');
   const [isEmail, setIsEmail] = useState('');
+  const [pickup, setPickup] = useState('');
   useEffect(() => {
     getDriver();
   }, []);
@@ -54,6 +56,7 @@ const OnlineBottomContent = ({driverEmail}) => {
       res.data.map((driver) => {
         if (driver.email == driverEmail) {
           setDriverId(driver.id);
+          setDriverPin(driver.pin);
           setDriverRoute(driver.route);
         }
       });
@@ -69,11 +72,10 @@ const OnlineBottomContent = ({driverEmail}) => {
         });
       });
   }
-
   function getVehicle(id) {
     axios.get(`${api.vehicle}/api/vehicles/${id}/`).then((res) => {
       setVehicle(res.data);
-      setCapacity(res.data.capacity);
+      setCapacity(Number(res.data.capacity));
     });
   }
 
@@ -87,6 +89,9 @@ const OnlineBottomContent = ({driverEmail}) => {
     let hours = date.getHours();
     let strTime = hours >= 12 ? 'pm' : 'am';
     setGreeting(strTime);
+  }
+  function isBooked() {
+    setCapacity(capacity - 1);
   }
 
   useEffect(() => {
@@ -116,7 +121,7 @@ const OnlineBottomContent = ({driverEmail}) => {
       <View>
         <View style={styles.renderBusStopHeaderCont}>
           <Text style={[styles.busStopHeader, {flex: 2}]}>BUS Stops</Text>
-          <Text style={styles.busStopHeader}>Drop</Text>
+          <Text style={styles.busStopHeader} onPress={()=>isBooked()}>Drop</Text>
           <Text style={styles.busStopHeader}>Pick</Text>
         </View>
         <FlatList
@@ -149,6 +154,7 @@ const OnlineBottomContent = ({driverEmail}) => {
                 onPress={() => {
                   setIsShowSelectPassenger(true);
                   setIsShowPassengerModal(true);
+                  setPickup(item.item.busstop);
                 }}
                 style={{
                   flex: 1,
@@ -284,7 +290,14 @@ const OnlineBottomContent = ({driverEmail}) => {
           />
         )}
         {isShowSignUpUser && (
-          <SignUpUser dismiss={dismiss} hideSignUpUser={hideSignUpUser} />
+          <SignUpUser
+            dismiss={dismiss}
+            hideSignUpUser={hideSignUpUser}
+            pickUp={pickup}
+            driverPin={driverPin}
+            route={driverRoute}
+            busStop={busStop}
+          />
         )}
       </Modal>
     );

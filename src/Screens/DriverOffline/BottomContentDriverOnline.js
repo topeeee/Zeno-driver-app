@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import {View, Image, Modal, FlatList, StyleSheet} from 'react-native';
-import {Text, Button} from '../../Components';
-import {my_location, green_circle, arrow_down} from '../../images';
+import React, {useEffect, useState} from 'react';
+import {FlatList, Image, Modal, StyleSheet, View} from 'react-native';
+import {Button, Text} from '../../Components';
+import {green_circle, my_location} from '../../images';
 import SelectPassenger from './SelectPassenger';
 import SetPassengerModal from './SetPassengerModal';
 import SignUpUser from './SignUpUser';
@@ -20,10 +20,12 @@ const OnlineBottomContent = ({driverEmail}) => {
   const [isShowReciptsModal, setIsShowReciptsModal] = useState(false);
   const [driverVehicle, setDriverVehicle] = useState([]);
   const [driverId, setDriverId] = useState('');
+  const [driverRoute, setDriverRoute] = useState('');
   const [vehicle, setVehicle] = useState([]);
+  const [busStop, setBusStop] = useState([]);
   const [vehicleId, setVehicleId] = useState('');
   const [capacity, setCapacity] = useState('');
-
+  const [greeting, setGreeting] = useState('');
   const [driver, setDriver] = useState([]);
   const [driverName, setDriverName] = useState('');
   const [isEmail, setIsEmail] = useState('');
@@ -52,6 +54,7 @@ const OnlineBottomContent = ({driverEmail}) => {
       res.data.map((driver) => {
         if (driver.email == driverEmail) {
           setDriverId(driver.id);
+          setDriverRoute(driver.route);
         }
       });
       setDriver(res.data);
@@ -63,9 +66,7 @@ const OnlineBottomContent = ({driverEmail}) => {
       .then((res) => {
         res.data.map((data) => {
           setVehicleId(data.vehicleId);
-
         });
-
       });
   }
 
@@ -76,28 +77,41 @@ const OnlineBottomContent = ({driverEmail}) => {
     });
   }
 
-  function getBusStop() {
-    axios.get('http://165.22.116.11:7108/api/me/busstops/')
-        .then(res=> {
-          console.log(res.data, 'fdfdfcxvcvcxc')
-        })
+  function getBusStop(route) {
+    axios
+      .get(`http://165.22.116.11:7108/api/routecode/?search=${route}`)
+      .then((res) => {
+        setBusStop(res.data);
+      });
   }
 
-  useEffect(()=> {
-    getBusStop()
-  },[])
+  function formatAMPM(date) {
+    let hours = date.getHours();
+    let strTime = hours >= 12 ? 'pm' : 'am';
+    setGreeting(strTime);
+  }
+
+  useEffect(() => {
+    formatAMPM(new Date());
+  }, []);
+
+  useEffect(() => {
+    if (driverRoute) {
+      getBusStop(driverRoute);
+    }
+  }, [driverRoute]);
 
   useEffect(() => {
     if (driverId) {
       getDriverVehicle(driverId);
     }
-  },[driverId]);
+  }, [driverId]);
 
   useEffect(() => {
     if (vehicleId) {
       getVehicle(vehicleId);
     }
-  },[vehicleId]);
+  }, [vehicleId]);
 
   const renderBusStopsList = () => {
     return (
@@ -110,12 +124,12 @@ const OnlineBottomContent = ({driverEmail}) => {
         <FlatList
           style={{height: 400}}
           showsVerticalScrollIndicator={false}
-          data={[1, 2, 2, 3, 3, 1, 1, 1, 1, 1]}
-          renderItem={() => (
+          data={busStop}
+          renderItem={(item) => (
             <View style={styles.oneBusStopCont}>
               <View style={{flex: 2, flexDirection: 'row'}}>
-                <Text style={{width: 25, fontSize: 16}}>01</Text>
-                <Text style={{fontSize: 16}}>Akinloye</Text>
+                {/*<Text style={{width: 25, fontSize: 16}}>{item.index}</Text>*/}
+                <Text style={{fontSize: 16}}>{item.item.busstop}</Text>
               </View>
               <Text
                 onPress={() => setIsShowBusStopsList(!isShowBusStopsList)}
@@ -308,7 +322,7 @@ const OnlineBottomContent = ({driverEmail}) => {
             fontSize: 20,
             fontWeight: 'bold',
           }}>
-          Good afternoon, {driverName.firstname}
+          Good {greeting}, {driverName.firstname}
         </Text>
         <View style={{flexDirection: 'row', marginVertical: 15}}>
           <Text style={{fontSize: 16}}>Zone:</Text>
@@ -323,8 +337,14 @@ const OnlineBottomContent = ({driverEmail}) => {
             {driverName.area}
           </Text>
         </View>
-        <Text style={{marginVertical: 5, fontSize: 16, flexDirection: 'row'}}>
-          {driverName.route}: <Image source={my_location} /> --------------{' '}
+        <Text
+          style={{
+            marginVertical: 5,
+            fontSize: 16,
+            flexDirection: 'row',
+            fontWeight: 'bold',
+          }}>
+          {/*{driverName.route}: <Image source={my_location} /> --------------{' '}*/}
           <Image source={my_location} /> {driverName.route}
         </Text>
         <View
@@ -336,7 +356,7 @@ const OnlineBottomContent = ({driverEmail}) => {
           }}>
           <Image source={green_circle} />
           <Text style={{fontSize: 14, marginHorizontal: 5}}>
-            Current Bus Stop : Bola llori
+            Current Bus Stop : Sandfilled
           </Text>
           <View
             style={{

@@ -11,21 +11,21 @@ const BottomContentDriverOffline = ({driverEmail, isDriver, drivers}) => {
   const [driver, setDriver] = useState([]);
   const [driverName, setDriverName] = useState('');
   const [isEmail, setIsEmail] = useState('');
+  const [greeting, setGreeting] = useState('');
   useEffect(() => {
-    getDriver()
+    getDriver();
   }, []);
 
   useEffect(() => {
-    if(driverEmail) {
-      setIsEmail(driverEmail)
+    if (driverEmail) {
+      setIsEmail(driverEmail);
     }
-      }, [driverEmail]);
-
+  }, [driverEmail]);
 
   useEffect(() => {
     if (driver) {
       driver.map((driverName) => {
-        if(driverName.email == isEmail){
+        if (driverName.email == isEmail) {
           setDriverName(driverName);
         }
       });
@@ -38,10 +38,22 @@ const BottomContentDriverOffline = ({driverEmail, isDriver, drivers}) => {
     });
   }
 
+  function formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = hours >= 12 ? 'Pm' : 'am';
+    let strTime = ampm;
+    setGreeting(strTime);
+  }
+
+  useEffect(() => {
+    formatAMPM(new Date());
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading} onPress={() => getDriver()}>
-        Good afternoon {driverName.firstname}
+        Good {greeting}, {driverName.firstname}
       </Text>
       <Image style={styles.imageMoon} source={offline_moon_black} />
       <Text style={styles.subHeading}>

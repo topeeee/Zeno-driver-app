@@ -41,7 +41,7 @@ const BottomContentDriverOffline = ({driverEmail, isDriver, drivers}) => {
   function formatAMPM(date) {
     let hours = date.getHours();
     let minutes = date.getMinutes();
-    let ampm = hours >= 12 ? 'Pm' : 'am';
+    let ampm = hours >= 12 ? 'Evening' : 'Morning';
     let strTime = ampm;
     setGreeting(strTime);
   }

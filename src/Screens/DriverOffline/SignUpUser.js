@@ -10,6 +10,7 @@ const PassengerPickupModal = ({
   driverPin,
   route,
   busStop,
+  isBooked,
 }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -67,7 +68,9 @@ const PassengerPickupModal = ({
       dropOff,
     };
     axios.post('http://165.22.116.11:7500/api/me/trips/', body1).then((res) => {
-      console.log(res.data, 'trgfgfgfgggfgd');
+      if (res.data) {
+        isBooked(res.data.dropOff);
+      }
     });
   }
 

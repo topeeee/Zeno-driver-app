@@ -31,6 +31,8 @@ const OnlineBottomContent = ({driverEmail}) => {
   const [driverName, setDriverName] = useState('');
   const [isEmail, setIsEmail] = useState('');
   const [pickup, setPickup] = useState('');
+  const [drop, setDrop] = useState('');
+  const [trips, setTrips] = useState([]);
   useEffect(() => {
     getDriver();
   }, []);
@@ -52,16 +54,21 @@ const OnlineBottomContent = ({driverEmail}) => {
   }, [driver]);
 
   function getDriver() {
-    axios.get(`${api.driver}/api/drivers/`).then((res) => {
-      res.data.map((driver) => {
-        if (driver.email == driverEmail) {
-          setDriverId(driver.id);
-          setDriverPin(driver.pin);
-          setDriverRoute(driver.route);
-        }
+    axios
+      .get(`${api.driver}/api/drivers/`)
+      .then((res) => {
+        res.data.map((driver) => {
+          if (driver.email == driverEmail) {
+            setDriverId(driver.id);
+            setDriverPin(driver.pin);
+            setDriverRoute(driver.route);
+          }
+        });
+        setDriver(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      setDriver(res.data);
-    });
   }
   function getDriverVehicle(id) {
     axios
@@ -70,28 +77,104 @@ const OnlineBottomContent = ({driverEmail}) => {
         res.data.map((data) => {
           setVehicleId(data.vehicleId);
         });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
   function getVehicle(id) {
-    axios.get(`${api.vehicle}/api/vehicles/${id}/`).then((res) => {
-      setVehicle(res.data);
-      setCapacity(Number(res.data.capacity));
-    });
+    axios
+      .get(`${api.vehicle}/api/vehicles/${id}/`)
+      .then((res) => {
+        setVehicle(res.data);
+        setCapacity(Number(res.data.capacity));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function getBusStop(route) {
-    axios.get(`${api.busStop}/api/routecode/?search=${route}`).then((res) => {
-      setBusStop(res.data);
-    });
+    axios
+      .get(`${api.busStop}/api/routecode/?search=${route}`)
+      .then((res) => {
+        const newBusStop = res.data.map((v) => ({...v, pickNumber: 0}));
+        setBusStop(newBusStop);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function formatAMPM(date) {
     let hours = date.getHours();
-    let strTime = hours >= 12 ? 'pm' : 'am';
+    let strTime = hours >= 12 ? 'Evening' : 'Morning';
     setGreeting(strTime);
   }
-  function isBooked() {
+  function isBooked(isdrop) {
     setCapacity(capacity - 1);
+    const newProjects = busStop.map((p) =>
+      p.busstop === isdrop ? {...p, pickNumber: p.pickNumber + 1} : p,
+    );
+
+    setBusStop(newProjects);
+  }
+
+  function isDropped() {
+    setCapacity(capacity + 1);
+    const newProjects = busStop.map((p) =>
+      p.busstop === drop ? {...p, pickNumber: p.pickNumber - 1} : p,
+    );
+
+    setBusStop(newProjects);
+  }
+
+  function getTrips() {
+    console.log('fired');
+    axios
+      .get(`http://165.22.116.11:7500/api/trips/?search=${driverRoute}`)
+      .then((res) => {
+        console.log(res.data)
+        setTrips(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function isDrop(tripId) {
+    axios
+      .put(`http://165.22.116.11:7500/api/drop/${tripId}/?status=1&driverPin=${driverPin}`)
+      .then((res) => {
+        if (res.data) {
+          getTrips();
+          isDropped();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function isDropAll() {
+    axios
+      .post(`http://165.22.116.11:7500/api/dropall/?dropOff=${drop}&driverPin=${driverPin}&pickedStatus=1&dropStatus=1`)
+      .then((res) => {
+        getTrips();
+        isDroppedAll(res.data.length);
+        setIsShowReciptsModal(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  function isDroppedAll(amount) {
+    setCapacity(capacity + amount);
+    const newProjects = busStop.map((p) =>
+      p.busstop === drop ? {...p, pickNumber: p.pickNumber - amount} : p,
+    );
+
+    setBusStop(newProjects);
   }
 
   useEffect(() => {
@@ -121,7 +204,7 @@ const OnlineBottomContent = ({driverEmail}) => {
       <View>
         <View style={styles.renderBusStopHeaderCont}>
           <Text style={[styles.busStopHeader, {flex: 2}]}>BUS Stops</Text>
-          <Text style={styles.busStopHeader} onPress={()=>isBooked()}>Drop</Text>
+          <Text style={styles.busStopHeader}>Drop</Text>
           <Text style={styles.busStopHeader}>Pick</Text>
         </View>
         <FlatList
@@ -135,7 +218,11 @@ const OnlineBottomContent = ({driverEmail}) => {
                 <Text style={{fontSize: 16}}>{item.item.busstop}</Text>
               </View>
               <Text
-                onPress={() => setIsShowBusStopsList(!isShowBusStopsList)}
+                onPress={() => {
+                  getTrips();
+                  setIsShowBusStopsList(!isShowBusStopsList);
+                  setDrop(item.item.busstop);
+                }}
                 style={{
                   flex: 1,
                   fontSize: 14,
@@ -148,7 +235,7 @@ const OnlineBottomContent = ({driverEmail}) => {
                   color: '#fff',
                   fontWeight: 'bold',
                 }}>
-                0
+                {item.item.pickNumber}
               </Text>
               <Text
                 onPress={() => {
@@ -180,73 +267,101 @@ const OnlineBottomContent = ({driverEmail}) => {
   const renderDropOffPassenger = () => {
     return (
       <View style={{flex: 1}}>
-        {[1, 1].map((x) => (
-          <View
-            style={{
-              height: 80,
-              borderWidth: 0,
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#F7F7F7',
-              borderRadius: 10,
-              paddingHorizontal: 5,
-              marginVertical: 3,
-            }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <View style={{flex: 1, borderWidth: 0, marginHorizontal: 10}}>
-                <Text style={{fontSize: 12}}>Trip ID : 0001</Text>
-                <View
-                  style={{
-                    backgroundColor: '#C2354D',
-                    paddingHorizontal: 10,
-                    paddingVertical: 7,
-                    borderRadius: 6,
-                    width: 75,
-                    marginVertical: 5,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                    }}>
-                    Drop
-                  </Text>
+        {trips &&
+          trips
+            .filter(
+              (user) =>
+                user.pickStatus == 1 &&
+                user.dropStatus == 0 &&
+                user.dropOff === drop,
+            )
+            .map((trip) => (
+              <View
+                style={{
+                  height: 80,
+                  borderWidth: 0,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: '#F7F7F7',
+                  borderRadius: 10,
+                  paddingHorizontal: 5,
+                  marginVertical: 3,
+                }}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{flex: 1, borderWidth: 0, marginHorizontal: 10}}>
+                    <Text style={{fontSize: 12}}>Trip ID : {trip.id}</Text>
+                    <View
+                      style={{
+                        backgroundColor: '#C2354D',
+                        paddingHorizontal: 10,
+                        paddingVertical: 7,
+                        borderRadius: 6,
+                        width: 75,
+                        marginVertical: 5,
+                      }}>
+                      <Text
+                        onPress={() => isDrop(trip.id)}
+                        style={{
+                          color: '#fff',
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}>
+                        Drop
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <Text />
+                    <View
+                      style={{
+                        backgroundColor: '#679C4C',
+                        paddingHorizontal: 10,
+                        paddingVertical: 7,
+                        borderRadius: 6,
+                        width: 75,
+                        marginVertical: 5,
+                      }}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}>
+                        Pin: {trip.passengerPin}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <Text />
+                    <View
+                      style={{
+                        backgroundColor: 'gray',
+                        paddingHorizontal: 10,
+                        paddingVertical: 7,
+                        borderRadius: 6,
+                        width: 75,
+                        marginVertical: 5,
+                      }}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}>
+                        Extend
+                      </Text>
+                    </View>
+                  </View>
+                  {/*<Text style={{fontSize: 20}}>₦24</Text>*/}
                 </View>
               </View>
-              <View style={{flex: 1}}>
-                <Text />
-                <View
-                  style={{
-                    backgroundColor: '#679C4C',
-                    paddingHorizontal: 10,
-                    paddingVertical: 7,
-                    borderRadius: 6,
-                    width: 75,
-                    marginVertical: 5,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                    }}>
-                    Pin: 1234
-                  </Text>
-                </View>
-              </View>
-              <Text style={{fontSize: 20}}>₦240.00</Text>
-            </View>
-          </View>
-        ))}
+            ))}
 
         <View style={{width: '50%', alignSelf: 'center', marginVertical: 10}}>
-          <Button
-            onPress={() => setIsShowReciptsModal(true)}
-            text={'Drop All'}
-          />
+          <Button onPress={() => isDropAll()} text={'Drop All'} />
         </View>
       </View>
     );
@@ -297,6 +412,7 @@ const OnlineBottomContent = ({driverEmail}) => {
             driverPin={driverPin}
             route={driverRoute}
             busStop={busStop}
+            isBooked={isBooked}
           />
         )}
       </Modal>

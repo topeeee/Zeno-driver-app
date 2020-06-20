@@ -2,7 +2,7 @@ import React from 'react';
 import {View, TextInput} from 'react-native';
 import {Text} from '..';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-const Input = ({label, value, style, placeholder, icon, onChangeText}) => {
+const Input = ({label, value, style, placeholder, icon, onChangeText, secureTextEntry}) => {
   return (
     <View style={{flex: 1}}>
       <Text style={{color: '#7A869A', fontSize: 15, ...style}}>{label}</Text>
@@ -22,6 +22,7 @@ const Input = ({label, value, style, placeholder, icon, onChangeText}) => {
           style={{flex: 1}}
           placeholder={placeholder}
           onChangeText={(inputText) => onChangeText(inputText)}
+          secureTextEntry={secureTextEntry}
         />
         {icon && <AntDesign name={'check'} size={20} />}
       </View>

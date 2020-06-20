@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, Modal, StyleSheet, View} from 'react-native';
+import {
+  AsyncStorage,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Button, Text} from '../../Components';
 import {green_circle, my_location} from '../../images';
 import SelectPassenger from './SelectPassenger';
@@ -28,82 +35,69 @@ const OnlineBottomContent = ({driverEmail}) => {
   const [capacity, setCapacity] = useState(null);
   const [greeting, setGreeting] = useState('');
   const [driver, setDriver] = useState([]);
-  const [driverName, setDriverName] = useState('');
+  const [driverDetails, setDriverDetails] = useState('');
   const [isEmail, setIsEmail] = useState('');
   const [pickup, setPickup] = useState('');
   const [drop, setDrop] = useState('');
   const [trips, setTrips] = useState([]);
+    const [tripsLength, setTripsLength] = useState('');
+
+  async function getDriverEmail() {
+    try {
+      let userData = await AsyncStorage.getItem('driverEmail');
+      let data = JSON.parse(userData);
+      await searchDriver(data);
+      setIsEmail(data);
+    } catch (error) {
+      console.log('Something went wrong', error);
+    }
+  }
+
+  async function searchDriver(id) {
+    try {
+      const res = await axios.get(`${api.driver}/api/email/?email=${id}`);
+      setDriverId(res.data.id);
+      setDriverPin(res.data.pin);
+      setDriverRoute(res.data.route);
+      setDriverDetails(res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
-    getDriver();
+    // getDriver();
+    getDriverEmail();
   }, []);
 
-  useEffect(() => {
-    if (driverEmail) {
-      setIsEmail(driverEmail);
+  async function getDriverVehicle(id) {
+    try {
+      const res = await axios.get(`${api.driverVehicle}/api/vehicle/?driverId=${id}`);
+      res.data.map((data) => {
+        setVehicleId(data.vehicleId);
+      });
+    } catch (e) {
+      console.log(e);
     }
-  }, [driverEmail]);
-
-  useEffect(() => {
-    if (driver) {
-      driver.map((driverName) => {
-        if (driverName.email == isEmail) {
-          setDriverName(driverName);
-        }
-      });
+  }
+  async function getVehicle(id) {
+    try {
+      const res = await axios.get(`${api.vehicle}/api/vehicles/${id}/`);
+      setVehicle(res.data);
+      setCapacity(Number(res.data.capacity));
+    } catch (e) {
+      console.log(e);
     }
-  }, [driver]);
-
-  function getDriver() {
-    axios
-      .get(`${api.driver}/api/drivers/`)
-      .then((res) => {
-        res.data.map((driver) => {
-          if (driver.email == driverEmail) {
-            setDriverId(driver.id);
-            setDriverPin(driver.pin);
-            setDriverRoute(driver.route);
-          }
-        });
-        setDriver(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  function getDriverVehicle(id) {
-    axios
-      .get(`${api.driverVehicle}/api/vehicle/?driverId=${id}`)
-      .then((res) => {
-        res.data.map((data) => {
-          setVehicleId(data.vehicleId);
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  function getVehicle(id) {
-    axios
-      .get(`${api.vehicle}/api/vehicles/${id}/`)
-      .then((res) => {
-        setVehicle(res.data);
-        setCapacity(Number(res.data.capacity));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 
-  function getBusStop(route) {
-    axios
-      .get(`${api.busStop}/api/routecode/?search=${route}`)
-      .then((res) => {
-        const newBusStop = res.data.map((v) => ({...v, pickNumber: 0}));
-        setBusStop(newBusStop);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  async function getBusStop(route) {
+    try {
+      const res = await axios.get(`${api.busStop}/api/routecode/?search=${route}`);
+      const newBusStop = res.data.map((v) => ({...v, pickNumber: 0}));
+      setBusStop(newBusStop);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   function formatAMPM(date) {
@@ -129,44 +123,43 @@ const OnlineBottomContent = ({driverEmail}) => {
     setBusStop(newProjects);
   }
 
-  function getTrips() {
-    console.log('fired');
-    axios
-      .get(`http://165.22.116.11:7500/api/trips/?search=${driverRoute}`)
-      .then((res) => {
-        console.log(res.data)
-        setTrips(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  async function getTrips() {
+    try {
+      const res = await axios.get(`${api.trip}/api/trips/?search=${driverRoute}`);
+      setTrips(res.data);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  function isDrop(tripId) {
-    axios
-      .put(`http://165.22.116.11:7500/api/drop/${tripId}/?status=1&driverPin=${driverPin}`)
-      .then((res) => {
-        if (res.data) {
-          getTrips();
-          isDropped();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  function isDropAll() {
-    axios
-      .post(`http://165.22.116.11:7500/api/dropall/?dropOff=${drop}&driverPin=${driverPin}&pickedStatus=1&dropStatus=1`)
-      .then((res) => {
+  async function isDrop(tripId) {
+    try {
+      const res = await axios.put(`${api.trip}/api/drop/${tripId}/?status=1&driverPin=${driverPin}`);
+      if (res.data) {
         getTrips();
-        isDroppedAll(res.data.length);
+        isDropped();
+        setTripsLength(tripsLength - 1);
         setIsShowReciptsModal(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        setTimeout(() => {
+          setIsShowReciptsModal(false);
+        }, 3000);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function isDropAll() {
+    try {
+      const res = await axios.post(`${api.trip}/api/dropall/?dropOff=${drop}&driverPin=${driverPin}&pickedStatus=1&dropStatus=1`);
+      if (res) {
+        getTrips();
+        isDroppedAll(tripsLength);
+        setIsShowReciptsModal(true);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
   function isDroppedAll(amount) {
     setCapacity(capacity + amount);
@@ -176,6 +169,16 @@ const OnlineBottomContent = ({driverEmail}) => {
 
     setBusStop(newProjects);
   }
+
+  useEffect(() => {
+    if (trips && drop) {
+      const filtered = trips.filter(
+        (user) =>
+          user.pickStatus == 1 && user.dropStatus == 0 && user.dropOff === drop,
+      );
+      setTripsLength(filtered.length);
+    }
+},[trips, drop]);
 
   useEffect(() => {
     formatAMPM(new Date());
@@ -199,6 +202,11 @@ const OnlineBottomContent = ({driverEmail}) => {
     }
   }, [vehicleId]);
 
+  function openModal() {
+    setIsShowSelectPassenger(true);
+    setIsShowSetPassenger(false);
+  }
+
   const renderBusStopsList = () => {
     return (
       <View>
@@ -219,9 +227,11 @@ const OnlineBottomContent = ({driverEmail}) => {
               </View>
               <Text
                 onPress={() => {
-                  getTrips();
-                  setIsShowBusStopsList(!isShowBusStopsList);
-                  setDrop(item.item.busstop);
+                  if (item.item.pickNumber > 0) {
+                    getTrips();
+                    setIsShowBusStopsList(!isShowBusStopsList);
+                    setDrop(item.item.busstop);
+                  }
                 }}
                 style={{
                   flex: 1,
@@ -276,6 +286,7 @@ const OnlineBottomContent = ({driverEmail}) => {
                 user.dropOff === drop,
             )
             .map((trip) => (
+
               <View
                 style={{
                   height: 80,
@@ -361,7 +372,8 @@ const OnlineBottomContent = ({driverEmail}) => {
             ))}
 
         <View style={{width: '50%', alignSelf: 'center', marginVertical: 10}}>
-          <Button onPress={() => isDropAll()} text={'Drop All'} />
+          <Button onPress={() => isDropAll()} text={'Drop All'} style={{backgroundColor: 'green'}}/>
+          <Button onPress={() => backToHome()} text={'Home'} />
         </View>
       </View>
     );
@@ -396,12 +408,18 @@ const OnlineBottomContent = ({driverEmail}) => {
         transparent={true}
         visible={isShowPassengerModal}>
         {isShowSelectPassenger && (
-          <SelectPassenger showSetPassengerModal={showSetPassengerModal} />
+          <SelectPassenger showSetPassengerModal={showSetPassengerModal} setIsShowSelectPassenger={setIsShowSelectPassenger} setIsShowPassengerModal={setIsShowPassengerModal}  />
         )}
         {isShowSetPassenger && (
           <SetPassengerModal
             showSignUpUser={showSignUpUser}
             backToHome={backToHome}
+            busStop={busStop}
+            openModal={openModal}
+            isBooked={isBooked}
+            pickUp={pickup}
+            driverPin={driverPin}
+            route={driverRoute}
           />
         )}
         {isShowSignUpUser && (
@@ -449,19 +467,19 @@ const OnlineBottomContent = ({driverEmail}) => {
             fontSize: 20,
             fontWeight: 'bold',
           }}>
-          Good {greeting}, {driverName.firstname}
+          Good {greeting}, {driverDetails.firstname}
         </Text>
         <View style={{flexDirection: 'row', marginVertical: 15}}>
           <Text style={{fontSize: 16}}>Zone:</Text>
           <Text
             style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 16}}>
-            {driverName.zone}
+            {driverDetails.zone}
           </Text>
           <Text style={{marginHorizontal: 10}}>|</Text>
           <Text style={{fontSize: 16}}>Area:</Text>
           <Text
             style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 16}}>
-            {driverName.area}
+            {driverDetails.area}
           </Text>
         </View>
         <Text
@@ -472,7 +490,7 @@ const OnlineBottomContent = ({driverEmail}) => {
             fontWeight: 'bold',
           }}>
           {/*{driverName.route}: <Image source={my_location} /> --------------{' '}*/}
-          <Image source={my_location} /> {driverName.route}
+          <Image source={my_location} /> {driverDetails.route}
         </Text>
         <View
           style={{

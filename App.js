@@ -26,19 +26,7 @@ const App = () => {
     },
     (error) => Promise.reject(error),
   );
-  // axios.interceptors.request.use(
-  //   async (config) => {
-  //     let userData = await AsyncStorage.getItem('userData');
-  //     let data = JSON.parse(userData);
-  //     if (data) {
-  //       config.headers.Authorization = data;
-  //     }
-  //     return config;
-  //   },
-  //   (error) => {
-  //     return Promise.reject(error);
-  //   },
-  // );
+
 
   const Stack = createStackNavigator();
   return (

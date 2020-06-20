@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Image, StyleSheet, AsyncStorage} from 'react-native';
 import {Text} from '../../Components';
 import {offline_moon_black} from '../../images';
 import {connect} from 'react-redux';
@@ -9,34 +9,35 @@ import api from '../../environments/environment';
 
 const BottomContentDriverOffline = ({driverEmail, isDriver, drivers}) => {
   const [driver, setDriver] = useState([]);
-  const [driverName, setDriverName] = useState('');
+  const [driverDetails, setDriverDetails] = useState('');
   const [isEmail, setIsEmail] = useState('');
   const [greeting, setGreeting] = useState('');
-  useEffect(() => {
-    getDriver();
-  }, []);
 
-  useEffect(() => {
-    if (driverEmail) {
-      setIsEmail(driverEmail);
+  async function getDriverEmail() {
+    try {
+      let userData = await AsyncStorage.getItem('driverEmail');
+      let data = JSON.parse(userData);
+      await searchDriver(data);
+      setIsEmail(data);
+    } catch (error) {
+      console.log('Something went wrong', error);
     }
-  }, [driverEmail]);
-
-  useEffect(() => {
-    if (driver) {
-      driver.map((driverName) => {
-        if (driverName.email == isEmail) {
-          setDriverName(driverName);
-        }
-      });
-    }
-  }, [driver]);
-
-  function getDriver() {
-    axios.get(`${api.driver}/api/drivers/`).then((res) => {
-      setDriver(res.data);
-    });
   }
+
+  async function searchDriver(id) {
+    try {
+      const res = await axios.get(
+        `${api.driver}/api/email/?email=${id}`,
+      );
+      setDriverDetails(res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    getDriverEmail();
+  }, []);
 
   function formatAMPM(date) {
     let hours = date.getHours();
@@ -52,8 +53,8 @@ const BottomContentDriverOffline = ({driverEmail, isDriver, drivers}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading} onPress={() => getDriver()}>
-        Good {greeting}, {driverName.firstname}
+      <Text style={styles.heading}>
+        Good {greeting}, {driverDetails.firstname}
       </Text>
       <Image style={styles.imageMoon} source={offline_moon_black} />
       <Text style={styles.subHeading}>

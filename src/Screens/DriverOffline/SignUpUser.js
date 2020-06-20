@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {View, ScrollView, StyleSheet, Picker, FlatList} from 'react-native';
 import {Text, Button, Input} from '../../Components';
+import api from '../../environments/environment';
 
 const PassengerPickupModal = ({
   dismiss,
@@ -16,7 +17,7 @@ const PassengerPickupModal = ({
   const [lastName, setLastName] = useState('');
   const [homeLocation, setHomeLocation] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [pin, setPin] = useState('');
+  // const [pin, setPin] = useState('');
   const [passengerPin, setPassengerPin] = useState('');
   const [email, setEmail] = useState('');
   const [mode] = useState('not available');
@@ -27,35 +28,45 @@ const PassengerPickupModal = ({
   const [cost] = useState(200);
   const [dropOff, setDropOff] = useState('');
 
-  const body = {
-    firstName,
-    lastName,
-    email,
-    dateOfBirth,
-    phoneNumber,
-    homeLocation,
-    pin,
-    status,
-  };
-
   useEffect(() => {
     if (phoneNumber) {
-      setPin(phoneNumber + 'password');
       setEmail(phoneNumber + '@gmail.com');
     }
   }, [phoneNumber]);
 
-  function registerUser() {
-    axios
-      .post('http://165.22.116.11:7200/api/me/userdetails/', body)
-      .then((res) => {
-        setPassengerPin(res.data.pin);
-        hideSignUpUser();
+  async function getUserPin() {
+    try {
+      const res = await axios.post(`${api.login}/admin/users/`, {
+        username: phoneNumber,
+        password: 'password',
       });
+      await registerUser(res.data.id);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  // http://165.22.116.11:7500/api/me/trips/?passengerPin=45&mode=mode1&pickUp=pick1&dropOff=drop1&distance=200&cost=200&route=route1&driverPin=driverpin1&pickStatus=1
-  function setTrip() {
+  async function registerUser(pin) {
+    const body = {
+      firstName,
+      lastName,
+      email,
+      dateOfBirth,
+      phoneNumber,
+      homeLocation,
+      pin,
+      status,
+    };
+    try {
+      const res = await axios.post(`${api.user}/api/me/userdetails/`, body);
+      setPassengerPin(res.data.pin);
+      hideSignUpUser();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function setTrip() {
     const body1 = {
       passengerPin,
       mode,
@@ -67,11 +78,14 @@ const PassengerPickupModal = ({
       cost,
       dropOff,
     };
-    axios.post('http://165.22.116.11:7500/api/me/trips/', body1).then((res) => {
+    try {
+      const res = await axios.post(`${api.trip}/api/me/trips/`, body1);
       if (res.data) {
         isBooked(res.data.dropOff);
       }
-    });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   useEffect(() => {
@@ -163,7 +177,7 @@ const PassengerPickupModal = ({
                 </Picker>
               </View>
             </ScrollView>
-            <Button onPress={registerUser} text={'Sign Up'} style={{}} />
+            <Button onPress={getUserPin} text={'Sign Up'} style={{}} />
             {/*<Button onPress={hideSignUpUser} text={'Sign Up'} style={{}} />*/}
           </View>
         </View>

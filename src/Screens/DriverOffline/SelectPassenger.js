@@ -1,10 +1,20 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, TextInput, Modal, Image, Picker, StyleSheet} from 'react-native';
 import {Text, Button, Input} from '../../Components';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {popup_banner} from '../../images';
 
-const SelectPassenger = ({showSetPassengerModal}) => {
+const SelectPassenger = ({
+  showSetPassengerModal,
+  setIsShowSelectPassenger,
+  setIsShowPassengerModal,
+}) => {
+  const [selected, setSelected] = useState('');
+
+  function closeModal() {
+    setIsShowPassengerModal(false);
+    setIsShowSelectPassenger(false);
+  }
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
@@ -15,7 +25,10 @@ const SelectPassenger = ({showSetPassengerModal}) => {
               Number of passengers
             </Text>
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
-              <Picker selectedValue={'1'} style={{width: '100%'}}>
+              <Picker
+                selectedValue={selected}
+                onValueChange={(itemValue, itemIndex) => setSelected(itemValue)}
+                style={{width: '100%'}}>
                 <Picker.Item label="1" value="1" />
                 <Picker.Item label="2" value="2" />
                 <Picker.Item label="3" value="3" />
@@ -31,6 +44,7 @@ const SelectPassenger = ({showSetPassengerModal}) => {
               style={{marginVertical: 5}}
             />
             <Text
+                onPress={closeModal}
               style={{
                 textAlign: 'center',
                 fontSize: 14,

@@ -1,6 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
-import {View, StyleSheet, Image, Dimensions, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ScrollView,
+  AsyncStorage,
+} from 'react-native';
 import {LogIn, getToken} from '../../store/actions/authenticationAction';
 import {welcome_banner} from '../../images';
 import {Text} from '../../Components';
@@ -12,6 +19,8 @@ import {
   GoogleLoginButton,
   FacebookLoginButton,
 } from '../../Components';
+import axios from 'axios';
+import api from '../../environments/environment';
 
 const Login = ({
   navigation,
@@ -24,12 +33,42 @@ const Login = ({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  async function Login() {
+    const body = {username, password};
+    try {
+      const res = await axios.post(`${api.login}/api/login/`, body);
+      const token = res.data.Authorized;
+      await storeToken(token);
+      await storeDriverEmail(username);
+      if (token){
+        navigation.navigate('Home');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function storeToken(user) {
+    try {
+      await AsyncStorage.setItem('userData', JSON.stringify(user));
+    } catch (error) {
+      console.log('Something went wrong', error);
+    }
+  }
+
+  async function storeDriverEmail(user) {
+    try {
+      await AsyncStorage.setItem('driverEmail', JSON.stringify(user));
+    } catch (error) {
+      console.log('Something went wrong', error);
+    }
+  }
+
   // useEffect(() => {
   //   if (isAuthenticated) {
   //     navigation.navigate('Home');
   //   }
   // }, [isAuthenticated]);
-
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -52,6 +91,7 @@ const Login = ({
           value={password}
           onChangeText={setPassword}
           style={{marginVertical: 5}}
+          secureTextEntry={true}
         />
         {/*<Text*/}
         {/*  onPress={() => navigation.navigate('ForgetPassword')}*/}
@@ -63,8 +103,7 @@ const Login = ({
         {/*</Text>*/}
         <Button
           onPress={() => {
-            isLogIn(username, password);
-            navigation.navigate('Home');
+            Login(username, password);
           }}
           text={'SIGN IN'}
           style={{marginVertical: 5}}

@@ -13,6 +13,8 @@ const SetPassengerModal = ({
   pickUp,
   driverPin,
   route,
+  selected,
+  setSelected,
 }) => {
   const [dropOff, setDropOff] = useState('');
   const [pin, setPin] = useState('');
@@ -56,6 +58,7 @@ const SetPassengerModal = ({
         setVerifySuccess('Booking Successful');
         setPin('');
         setDropOff('');
+        setSelected(selected - 1);
         setTimeout(() => {
           setVerifySuccess('');
         }, 5000);
@@ -96,7 +99,7 @@ const SetPassengerModal = ({
             style={{fontSize: 20, top: -30, left: 300, color: 'red'}}>
             X
           </Text>
-          <Text style={styles.header}>Passenger</Text>
+          <Text style={styles.header}>Passenger {selected}</Text>
           <View style={styles.itemCont}>
             <View style={{flex: 1, marginHorizontal: 5}}>
               <Input
@@ -140,6 +143,7 @@ const SetPassengerModal = ({
                   onValueChange={(itemValue, itemIndex) =>
                     setDropOff(itemValue)
                   }>
+                  <Picker.Item label="Select" value="" />
                   {busStop &&
                     busStop.map((bus) => (
                       <Picker.Item label={bus.busstop} value={bus.busstop} />

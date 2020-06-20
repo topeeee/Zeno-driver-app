@@ -41,6 +41,7 @@ const OnlineBottomContent = ({driverEmail}) => {
   const [drop, setDrop] = useState('');
   const [trips, setTrips] = useState([]);
     const [tripsLength, setTripsLength] = useState('');
+  const [selected, setSelected] = useState('');
 
   async function getDriverEmail() {
     try {
@@ -408,7 +409,7 @@ const OnlineBottomContent = ({driverEmail}) => {
         transparent={true}
         visible={isShowPassengerModal}>
         {isShowSelectPassenger && (
-          <SelectPassenger showSetPassengerModal={showSetPassengerModal} setIsShowSelectPassenger={setIsShowSelectPassenger} setIsShowPassengerModal={setIsShowPassengerModal}  />
+          <SelectPassenger showSetPassengerModal={showSetPassengerModal} setIsShowSelectPassenger={setIsShowSelectPassenger} setIsShowPassengerModal={setIsShowPassengerModal} selected={selected} setSelected={setSelected}  />
         )}
         {isShowSetPassenger && (
           <SetPassengerModal
@@ -420,6 +421,8 @@ const OnlineBottomContent = ({driverEmail}) => {
             pickUp={pickup}
             driverPin={driverPin}
             route={driverRoute}
+            selected={selected}
+            setSelected={setSelected}
           />
         )}
         {isShowSignUpUser && (

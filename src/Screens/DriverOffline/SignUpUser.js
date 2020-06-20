@@ -170,6 +170,7 @@ const PassengerPickupModal = ({
                   onValueChange={(itemValue, itemIndex) =>
                     setDropOff(itemValue)
                   }>
+                  <Picker.Item label="Select" value="" />
                   {busStop &&
                     busStop.map((bus) => (
                       <Picker.Item label={bus.busstop} value={bus.busstop} />
@@ -177,8 +178,8 @@ const PassengerPickupModal = ({
                 </Picker>
               </View>
             </ScrollView>
-            <Button onPress={getUserPin} text={'Sign Up'} style={{}} />
-            {/*<Button onPress={hideSignUpUser} text={'Sign Up'} style={{}} />*/}
+            <Button onPress={getUserPin} text={'Sign Up'} style={{backgroundColor: 'green'}} />
+            <Button onPress={hideSignUpUser} text={'Back'} style={{}} />
           </View>
         </View>
       </View>

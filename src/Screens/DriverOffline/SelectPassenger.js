@@ -8,8 +8,9 @@ const SelectPassenger = ({
   showSetPassengerModal,
   setIsShowSelectPassenger,
   setIsShowPassengerModal,
+  selected,
+  setSelected,
 }) => {
-  const [selected, setSelected] = useState('');
 
   function closeModal() {
     setIsShowPassengerModal(false);

@@ -20,7 +20,7 @@ const SetPassengerModal = ({
   const [pin, setPin] = useState('');
   const [verifySuccess, setVerifySuccess] = useState('');
   const [verifyError, setVerifyError] = useState('');
-  const [pickStatus] = useState(1);
+  // const [pickStatus] = useState(1);
   const [distance] = useState('200km');
   const [cost] = useState(200);
   const [mode] = useState('not available');
@@ -46,13 +46,21 @@ const SetPassengerModal = ({
       pickUp,
       driverPin,
       route,
-      pickStatus,
       distance,
       cost,
       dropOff,
     };
     try {
       const res = await axios.post(`${api.trip}/api/me/trips/`, body);
+      await pickUser(res.data.id);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function pickUser(id) {
+    try {
+      const res = await axios.put(`http://165.22.116.11:7500/api/pick/${id}/?status=1`);
       if (res.data) {
         isBooked(dropOff);
         setVerifySuccess('Booking Successful');
@@ -104,7 +112,6 @@ const SetPassengerModal = ({
             <View style={{flex: 1, marginHorizontal: 5}}>
               <Input
                 label={'Enter PIN'}
-                style={{}}
                 placeholder={'1234'}
                 value={pin}
                 onChangeText={setPin}

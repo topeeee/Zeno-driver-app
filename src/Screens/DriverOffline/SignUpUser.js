@@ -23,10 +23,11 @@ const PassengerPickupModal = ({
   const [mode] = useState('not available');
   const [dateOfBirth] = useState('not available');
   const [status] = useState(1);
-  const [pickStatus] = useState(1);
+  // const [pickStatus] = useState('');
   const [distance] = useState('200km');
   const [cost] = useState(200);
   const [dropOff, setDropOff] = useState('');
+  const [bookingResponse, setBookingResponse] = useState('');
 
   useEffect(() => {
     if (phoneNumber) {
@@ -60,7 +61,7 @@ const PassengerPickupModal = ({
     try {
       const res = await axios.post(`${api.user}/api/me/userdetails/`, body);
       setPassengerPin(res.data.pin);
-      hideSignUpUser();
+      // hideSignUpUser();
     } catch (e) {
       console.log(e);
     }
@@ -73,18 +74,32 @@ const PassengerPickupModal = ({
       pickUp,
       driverPin,
       route,
-      pickStatus,
       distance,
       cost,
       dropOff,
     };
     try {
       const res = await axios.post(`${api.trip}/api/me/trips/`, body1);
-      if (res.data) {
-        isBooked(res.data.dropOff);
-      }
+      await pickUser(res.data.id);
     } catch (e) {
       console.log(e);
+    }
+  }
+
+
+  async function pickUser(id) {
+    try {
+      const res = await axios.put(`http://165.22.116.11:7500/api/pick/${id}/?status=1`);
+      isBooked(res.data.dropOff);
+      setBookingResponse('Booking Successful');
+      setTimeout(() => {
+        setBookingResponse('');
+      }, 5000);
+    } catch (e) {
+      setBookingResponse('Booking Not Successful');
+      setTimeout(() => {
+        setBookingResponse('');
+      }, 5000);
     }
   }
 
@@ -117,6 +132,7 @@ const PassengerPickupModal = ({
             SignUp new User
           </Text>
           <View style={styles.listCont}>
+            <Text style={{color: 'green'}}>{bookingResponse}</Text>
             <ScrollView
               showsVerticalScrollIndicator={false}
               style={{width: '100%', borderWidth: 0}}>
@@ -129,29 +145,21 @@ const PassengerPickupModal = ({
               />
               <Input
                 label={'First Name'}
-                style={{}}
-                placeholder={''}
                 value={firstName}
                 onChangeText={setFirstName}
               />
               <Input
                 label={'Last Name'}
-                style={{}}
-                placeholder={''}
                 value={lastName}
                 onChangeText={setLastName}
               />
               <Input
                 label={'Phone Number'}
-                style={{}}
-                placeholder={''}
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
               />
               <Input
                 label={'Address'}
-                style={{}}
-                placeholder={''}
                 value={homeLocation}
                 onChangeText={setHomeLocation}
               />
@@ -179,7 +187,7 @@ const PassengerPickupModal = ({
               </View>
             </ScrollView>
             <Button onPress={getUserPin} text={'Sign Up'} style={{backgroundColor: 'green'}} />
-            <Button onPress={hideSignUpUser} text={'Back'} style={{}} />
+            <Button onPress={hideSignUpUser} text={'Back'} />
           </View>
         </View>
       </View>

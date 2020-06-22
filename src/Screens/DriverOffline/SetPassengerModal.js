@@ -60,7 +60,7 @@ const SetPassengerModal = ({
 
   async function pickUser(id) {
     try {
-      const res = await axios.put(`http://165.22.116.11:7500/api/pick/${id}/?status=1`);
+      const res = await axios.put(`http://165.22.116.11:7500/api/pick/${id}/?status=1&driverPin=${driverPin}`);
       if (res.data) {
         isBooked(dropOff);
         setVerifySuccess('Booking Successful');

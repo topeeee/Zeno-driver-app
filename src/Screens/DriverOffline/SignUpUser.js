@@ -89,9 +89,14 @@ const PassengerPickupModal = ({
 
   async function pickUser(id) {
     try {
-      const res = await axios.put(`http://165.22.116.11:7500/api/pick/${id}/?status=1`);
+      const res = await axios.put(`http://165.22.116.11:7500/api/pick/${id}/?status=1&driverPin=${driverPin}`);
       isBooked(res.data.dropOff);
       setBookingResponse('Booking Successful');
+      setFirstName('');
+      setLastName('');
+      setHomeLocation('');
+      setDropOff('');
+      setPhoneNumber('');
       setTimeout(() => {
         setBookingResponse('');
       }, 5000);
@@ -108,6 +113,9 @@ const PassengerPickupModal = ({
       setTrip();
     }
   }, [passengerPin]);
+
+
+
 
   return (
     <View style={{flex: 1}}>

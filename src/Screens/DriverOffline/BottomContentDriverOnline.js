@@ -208,6 +208,8 @@ const OnlineBottomContent = ({driverEmail}) => {
     setIsShowSetPassenger(false);
   }
 
+  // console.log(driverPin, 'rrrrrrrr')
+
   const renderBusStopsList = () => {
     return (
       <View>
